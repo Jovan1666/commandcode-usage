@@ -1790,6 +1790,33 @@ function resetText(w) {
   return `${body}后重置`;
 }
 
+/**
+ * 状态栏与钩子共用的输出。
+ *
+ * 钩子要的是 stdout 上的 JSON，而且必须单行、无 ANSI——systemMessage 是纯文本，
+ * 带上转义码会原样显示成乱码。
+ *
+ * 抽出来是因为 --demo 走的是 emit()、不走 statuslineMode()：之前钩子分支只写在
+ * statuslineMode() 里，于是 `--hook --demo` 会掉进终端面板那条路。
+ */
+function emitStatus(view, opts, extra = {}) {
+  const text = renderStatusline(view, {
+    ...opts,
+    ...extra,
+    rows: opts.hook ? 1 : opts.rows,
+    color: opts.hook ? false : opts.color,
+  });
+  if (!text) return;
+
+  if (opts.hook) {
+    // Codex 的钩子协议：用 systemMessage 而不是 additionalContext——前者只显示给用户看，
+    // 不进模型上下文，所以每轮弹一次也不烧 token。
+    process.stdout.write(JSON.stringify({ systemMessage: text }) + LF);
+  } else {
+    process.stdout.write(text + LF);
+  }
+}
+
 function renderStatusline(view, opts = {}) {
   const c = makeColors(opts.color !== false);
   const w5 = view.windows?.fiveHour ?? null;
@@ -1983,29 +2010,13 @@ async function statuslineMode(creds, opts) {
     }
   }
 
-  const text = renderStatusline(view, {
-    ...opts,
-    stale,
-    ageMs: stale ? usable?.age : undefined,
-    // 钩子只有一行能显示，而且 systemMessage 是纯文本，带 ANSI 会原样显示成乱码。
-    rows: opts.hook ? 1 : opts.rows,
-    color: opts.hook ? false : opts.color,
-  });
-  if (!text) return;
-
-  if (opts.hook) {
-    // Codex 的钩子协议：往 stdout 写 JSON。用 systemMessage 而不是 additionalContext
-    // ——前者只是显示给用户看，**不进模型上下文**，所以每轮弹一次也不烧 token。
-    process.stdout.write(`${JSON.stringify({ systemMessage: text })}\n`);
-  } else {
-    process.stdout.write(`${text}\n`);
-  }
+  emitStatus(view, opts, { stale, ageMs: stale ? usable?.age : undefined });
 }
 
 function emit(view, opts) {
-  if (opts.mode === 'statusline') {
-    const text = renderStatusline(view, opts);
-    if (text) console.log(text);
+  // 状态栏和钩子都走这里——--demo 是经 emit() 出去的，漏掉钩子就预览不了。
+  if (opts.mode === 'statusline' || opts.hook) {
+    emitStatus(view, opts);
     return;
   }
   if (opts.mode === 'json') {

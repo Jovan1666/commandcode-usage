@@ -1,0 +1,42 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: ${{ matrix.os }} · node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # 三个平台都跑：核心脚本的很多决定是平台相关的（行尾、路径分隔符、
+        # Git Bash 走不走、CJK 宽度），只在 Linux 上绿过不等于能用。
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: ['18', '22']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: dsh 组件测试需要的 React
+        shell: bash
+        working-directory: plugins/dsh
+        run: |
+          mkdir -p .devdeps && cd .devdeps
+          echo '{"name":"devdeps","private":true}' > package.json
+          npm install --no-audit --no-fund react@18 react-dom@18
+
+      # 全部检查都在这个脚本里：同步一致性、渲染断言、隐藏逻辑、阈值与钩子、
+      # 静态检查、密钥扫描、dsh 的 141 项。本地跑同一条命令，不会出现"本地过 CI 挂"。
+      - name: 仓库检查
+        run: node scripts/check.mjs
