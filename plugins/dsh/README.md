@@ -35,7 +35,7 @@ No browser tab, no login, no guessing how much of the plan is left.
 | **Quiet when it should be** | No Command Code account? The card does not render at all |
 | **Bilingual** | The card follows your DSH interface language (中文 / English) |
 
-Everything is read from **your own account's data** — window count, caps and percentages come from the API, never assumed. Go, GOAT, Pro, Provider, Max and Teams all work; a plan that reports no rolling windows simply renders no rows.
+Everything is read from **your own account's data** — window count, caps and percentages come from the API, never assumed. GOAT, Pro, Provider, Max and Teams work; a plan that reports no rolling windows simply renders no rows. (The $1 **Go** tier is the exception — it has no API access, so the card has nothing to render there.)
 
 ## 先确认 dsh 版本
 
@@ -307,17 +307,17 @@ The CLI's human-readable output is Chinese; `--json` is language-neutral and is 
 # 1. React is needed only by the component test and the preview page
 mkdir .devdeps && cd .devdeps && npm init -y && npm install react@18 react-dom@18 && cd ..
 
-# 2. Everything at once — 129 checks, one verdict, no network, no real credentials
+# 2. Everything at once — 141 checks, one verdict, no network, no real credentials
 node scripts/verify.mjs           # add --live to also hit a real account
 node scripts/verify.mjs --quiet   # one summary line per suite
 ```
 
 ```text
-ok    quota   (discovery contract)            15 checks
-ok    host    (route, cache, concurrency)     28 checks
-ok    client  (rendering, boundaries)         53 checks
-ok    dynamic (drift, resets, bad payloads)   30 checks
-ok    cli     (arguments, exit codes)           3 checks
+ok    quota   (discovery contract)            17 checks
+ok    host    (route, cache, concurrency)     30 checks
+ok    client  (rendering, boundaries)         58 checks
+ok    dynamic (drift, resets, bad payloads)   33 checks
+ok    cli     (arguments, exit codes)          3 checks
 ok    audit   (credentials, host paths)
 ```
 

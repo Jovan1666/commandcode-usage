@@ -1,6 +1,6 @@
 # Command Code 额度 —— pi 扩展
 
-在输入框上方常驻一行，显示 5 小时 / 每周 / 每月三条窗口和各自的重置时间。
+在编辑器下方常驻一行（pi 默认 footer 之上），显示 5 小时 / 每周 / 每月三条窗口和各自的重置时间。
 
 ```
 ────────────────────────────────────────────────────────────  ← 输入框
@@ -20,7 +20,13 @@ pi install git:github.com/Jovan1666/commandcode-usage
 pi install ./commandcode-usage/plugins/pi
 ```
 
-也可以直接把 `index.ts` 拷进 `~/.pi/agent/extensions/`。
+手动装也可以，但**要把 `index.ts` 和 `src/cc-usage.mjs` 一起拷过去**——
+只拷 `index.ts` 的话脚本定位不到，widget 会静默为空，不会报错：
+
+```sh
+mkdir -p ~/.pi/agent/extensions/commandcode-usage
+cp plugins/pi/index.ts plugins/pi/src/cc-usage.mjs ~/.pi/agent/extensions/commandcode-usage/
+```
 
 ## 命令
 

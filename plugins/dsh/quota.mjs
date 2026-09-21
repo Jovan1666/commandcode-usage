@@ -129,9 +129,14 @@ const ENDPOINTS = Object.freeze({
 const SUBSCRIPTION_PLANS = Object.freeze({
   'individual-go': { name: 'Go', monthlyCredits: 10 },
   'individual-goat': { name: 'GOAT', monthlyCredits: 70 },
-  'individual-pro': { name: 'Pro', monthlyCredits: 30 },
+  // Pro 的内含额度是 $80（早期版本误写成 $30）。这个数不是展示用的：
+  // 它参与下面 capSuspect 的合理性校验，写小了会让 Pro 用户的月度百分比**整块消失**
+  // （ratio = 真实上限 / 名义额度 ≈ 80/30 = 2.67，超出 ±25% 容差）。
+  'individual-pro': { name: 'Pro', monthlyCredits: 80 },
   'individual-pro-v1': { name: 'Pro', monthlyCredits: 80 },
-  'individual-provider': { name: 'Provider', monthlyCredits: 15 },
+  // Provider 是按量计费，压根没有「内含额度」这回事，所以不给 monthlyCredits
+  // ——15 是它的月费，不是额度。给了会让它永远落在 capSuspect 里。
+  'individual-provider': { name: 'Provider' },
   'individual-max': { name: 'Max', monthlyCredits: 150 },
   'individual-ultra': { name: 'Ultra', monthlyCredits: 300 },
   'teams-pro': { name: 'Teams Pro', monthlyCredits: 40 },

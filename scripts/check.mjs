@@ -216,6 +216,49 @@ record('formats', () => {
   return `${n} 种输出`;
 });
 
+record('plans', async () => {
+  // 同一个仓库里有**两张套餐表**：core 的 PLANS，和 dsh 插件自己的 SUBSCRIPTION_PLANS。
+  // 它们必须说同一件事——dsh 那个数还参与 capSuspect 的合理性校验，写小了会让
+  // 那档用户的月度百分比整块消失。已经漂移过一次（Pro 写成 30，实际 80），
+  // 所以这里加一道机器检查，而不是靠人记得同步。
+  const core = fs.readFileSync(CORE, 'utf8');
+  const dsh = fs.readFileSync(path.join(ROOT, 'plugins', 'dsh', 'quota.mjs'), 'utf8');
+
+  const parseCore = () => {
+    const body = core.slice(core.indexOf('const PLANS = {'), core.indexOf('};', core.indexOf('const PLANS = {')));
+    const out = {};
+    for (const m of body.matchAll(/'([a-z0-9-]+)':\s*\{([^}]*)\}/g)) {
+      const rec = m[2];
+      const monthly = /monthly:\s*(\d+|null)/.exec(rec);
+      out[m[1]] = monthly && monthly[1] !== 'null' ? Number(monthly[1]) : null;
+    }
+    return out;
+  };
+  const parseDsh = () => {
+    const body = dsh.slice(dsh.indexOf('const SUBSCRIPTION_PLANS = Object.freeze({'), dsh.indexOf('});', dsh.indexOf('const SUBSCRIPTION_PLANS')));
+    const out = {};
+    for (const m of body.matchAll(/'([a-z0-9-]+)':\s*\{([^}]*)\}/g)) {
+      const mc = /monthlyCredits:\s*(\d+)/.exec(m[2]);
+      out[m[1]] = mc ? Number(mc[1]) : null;
+    }
+    return out;
+  };
+
+  const a = parseCore();
+  const b = parseDsh();
+  assert(Object.keys(a).length >= 8, `core 套餐表只解析出 ${Object.keys(a).length} 条，正则可能失效了`);
+  assert(Object.keys(b).length >= 7, `dsh 套餐表只解析出 ${Object.keys(b).length} 条，正则可能失效了`);
+
+  const drift = [];
+  for (const [id, coreValue] of Object.entries(a)) {
+    if (!(id in b)) continue;
+    if (a[id] !== b[id]) drift.push(`${id}: core=${coreValue} dsh=${b[id]}`);
+  }
+  assert(drift.length === 0, `两张套餐表对不上：${drift.join('；')}`);
+
+  return `${Object.keys(a).length} 档，两表一致`;
+});
+
 /* ------------------------------------------------------- 6. 全仓静态检查 */
 
 record('static', () => {

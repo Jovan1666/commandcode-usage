@@ -33,11 +33,13 @@ First release of the monorepo. Seven adapters, one core.
 
 **Deliberate omissions**
 
-- **No pacing warning.** The projection is in `--json` but never shown: extrapolating from
-  a short sample reports "you will run out" almost every time, and a warning that is
-  always on is not a warning.
-- **No web panel.** Removed; checking a browser tab is no better than the vendor's own
-  dashboard, and it was the heaviest part of the script.
+- **No pacing warning in the status line.** The projection is in `--json`, and the panels you
+  ask for (`--compact`, `--md`, `--html`, the terminal view) still print it — it is only kept
+  out of the always-on surfaces. Extrapolating from a short sample reports "you will run out"
+  almost every time, and a warning that is always on is not a warning.
+- **No web panel as the default surface.** The status line is the primary path; `--html`
+  still exists for the occasional big-picture look, but nothing points you at a browser tab —
+  checking one is no better than the vendor's own dashboard.
 
 **Known exception**
 

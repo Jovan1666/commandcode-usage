@@ -1,7 +1,7 @@
 /**
  * Command Code 额度 —— pi 扩展
  *
- * 在输入框上方常驻一行，显示 5 小时 / 每周 / 每月三条窗口。
+ * 在编辑器下方常驻一行（也就是 pi 默认 footer 之上），显示 5 小时 / 每周 / 每月三条窗口。
  * 取数复用本插件的 cc-usage.mjs（同一份核心），扩展只负责取回来显示。
  *
  *   /ccq-bar            查看状态
@@ -9,8 +9,11 @@
  *   /ccq-bar refresh    立刻刷新
  *
  * 装法（二选一）：
- *   pi install <本目录>                     或
- *   cp index.ts ~/.pi/agent/extensions/commandcode-usage.ts
+ *   pi install <本目录>
+ *
+ * 手动装要把 index.ts 和 cc-usage.mjs 一起放过去——只拷 index.ts 的话脚本找不到，
+ * widget 会静默为空：
+ *   cp index.ts cc-usage.mjs ~/.pi/agent/extensions/   (再按需改扩展目录名)
  *
  * 跑在本地、不经过模型，所以不消耗 token。
  */

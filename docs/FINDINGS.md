@@ -32,8 +32,8 @@ providers 总数: 222
 | 宿主 | 接入方式 | 路由信息落在哪 | 能否被插件读到 |
 |---|---|---|---|
 | **Claude Code** | 改 `ANTHROPIC_BASE_URL` 指向代理，再用别名把模型名映射过去 | `settings.json` 的 `env`：`ANTHROPIC_DEFAULT_<档位>_MODEL`（本地假名）与 `..._MODEL_NAME`（真实上游）成对出现 | ✅ 这两个变量 statusLine 子进程能继承到 |
-| **opencode** | 插件在启动时注册 provider（`commandcode` + `commandcode-claude` 两个） | 插件源码常量 / `~/.local/share/opencode/auth.json` | ✅ 插件自己就是注册方，直接知道自己注册了什么 |
-| **pi** | `pi-commandcode-provider` 之类的 provider 扩展 | pi 的 OAuth 凭证 + 扩展配置 | ✅ `ctx.model.provider` 直接可用 |
+| **opencode** | provider 由用户配置（社区插件注册 `commandcode` / `commandcode-claude` 两个） | `~/.config/opencode/opencode.json(c)` 的 provider 段；key 也可能在 `~/.local/share/opencode/auth.json` | ✅ 本仓库的适配器不读 provider，key 走 core 的通用凭证发现 |
+| **pi** | `pi-commandcode-provider` 之类的 provider 扩展 | pi 的 provider 配置（`~/.pi/agent/settings.json`）或环境变量 | ✅ key 走 core 的通用凭证发现；本仓库的扩展不读 `ctx.model` |
 | **Codex** | `config.toml` 里配 `model_providers.<id>.base_url` | 配置文件 | ✅ 插件能读配置 |
 | **Grok Build** | `config.toml` 的 `[model.<id>]` 带 `base_url` | 配置文件 | ✅ 同上 |
 | **DeepSeek Harness (dsh)** | `settings.yaml` 里配 provider 路由 | `apiKeyEnv` / `baseURL` | ✅ 同上 |
@@ -125,7 +125,7 @@ deepseek-v4-pro | deepseek-v4-flash | deepseek-v4.1-flash
 - 目录里**没有** → 确定没用 → 隐藏
 - 目录里**有**且来自路由映射 → 确定在用 → 显示
 - 目录里**有**但来自 transcript，且名字是 `claude-*` → **不猜**（原生 Anthropic 也叫这个名）
-  → 退回第 3 条
+  → 退回第 4 条（账号用量活跃度）
 
 ---
 

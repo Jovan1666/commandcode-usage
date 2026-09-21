@@ -294,11 +294,11 @@ node scripts/verify.mjs --quiet   # 每个套件只打一行汇总
 ```
 
 ```text
-ok    quota   (discovery contract)            15 checks
-ok    host    (route, cache, concurrency)     28 checks
-ok    client  (rendering, boundaries)         53 checks
-ok    dynamic (drift, resets, bad payloads)   30 checks
-ok    cli     (arguments, exit codes)           3 checks
+ok    quota   (discovery contract)            17 checks
+ok    host    (route, cache, concurrency)     30 checks
+ok    client  (rendering, boundaries)         58 checks
+ok    dynamic (drift, resets, bad payloads)   33 checks
+ok    cli     (arguments, exit codes)          3 checks
 ok    audit   (credentials, host paths)
 ```
 

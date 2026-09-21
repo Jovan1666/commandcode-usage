@@ -27,6 +27,7 @@
     "client.js",
     "quota.mjs",
     "cli",
+    "preview",
     "cordis.patch.yml",
     "LICENSE",
     "README.md"

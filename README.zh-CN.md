@@ -5,6 +5,8 @@
 
 跑在你本机、不经过模型，所以**查额度不消耗额度**。
 
+![状态栏：用量正常时，以及某个窗口快用完时](docs/images/statusline-claude-code.png)
+
 ```
 CC GOAT │ 5h █▎░░░░░░░░ 12% 4h27m后重置 │ 周 █▏░░░░░░░░ 11% 09-27重置 │ 月 ▋░░░░░░░░░ 6% $66.03 10-20重置
 ```
@@ -17,20 +19,25 @@ CC GOAT │ 5h █▎░░░░░░░░ 12% 4h27m后重置 │ 周 █▏�
 
 ## 安装
 
-每个 agent 的插件加载方式不同，所以各装各的。
-它们最终跑的都是同一份核心脚本（`core/cc-usage.mjs`）。
+每个 agent 的插件加载方式不同，所以各装各的。七个里有六个最终跑的是同一份核心脚本
+（`core/cc-usage.mjs`）；DeepSeek Harness 那个保留了自己的数据层，原因见[目录结构](#目录结构)。
 
 | Agent | 怎么装 | 常驻？ |
 |---|---|---|
-| **Claude Code** | `/plugin marketplace add Jovan1666/commandcode-usage` 再 `/plugin install commandcode-usage`，然后跑 `plugins/claude-code/scripts/setup.mjs` | ✅ 状态栏 |
+| **Claude Code** | `/plugin marketplace add Jovan1666/commandcode-usage` 再 `/plugin install commandcode-usage@commandcode-usage`，然后 `node ~/.claude/plugins/marketplaces/commandcode-usage/plugins/claude-code/scripts/setup.mjs` | ✅ 状态栏 |
 | **Codex CLI** | 插件市场（`.agents/plugins/marketplace.json`），自带的钩子每轮触发；Codex 会先问你信不信任它 | ⚠️ 每轮一行 |
 | **Grok Build** | `grok plugin marketplace add Jovan1666/commandcode-usage`，然后跑 `plugins/grok/scripts/setup.mjs` | ✅ 状态栏 |
 | **opencode** | 跑 `plugins/opencode/scripts/setup.mjs` | ✅ 侧栏 |
 | **pi** | `pi install ./commandcode-usage/plugins/pi`，或把 `index.ts` 拷进 `~/.pi/agent/extensions/` | ✅ 输入框上方 |
 | **DeepSeek Harness** | 克隆本仓库后 `dsh plugin --profile web add ./commandcode-usage/plugins/dsh`（要求 dsh `^0.1.5-rc.1`） | ✅ 侧栏 |
-| **ZCode** | `/plugin marketplace add Jovan1666/commandcode-usage` 再从市场里装 | ⚠️ 只能按需调用 |
+| **ZCode** | `/plugin marketplace add Jovan1666/commandcode-usage` 再 `/plugin install command-code-usage`（它的市场名和插件名都跟 Claude Code 那边不一样） | ⚠️ 只能按需调用 |
 
 全程不需要你填 API key——脚本自己去找，见[凭证](#凭证)。
+
+DeepSeek Harness 那张卡片有三态截图，在
+[`plugins/dsh/assets/screenshot.png`](plugins/dsh/assets/screenshot.png)——折叠角标、浅色展开、深色展开。
+其余五个平台渲染的都是上面那一行，所以只给文字、不另配图。
+
 
 ### 为什么有两个平台要多跑一个 setup
 
@@ -52,10 +59,12 @@ Grok 的插件格式里根本没有状态栏这一项）。所以最后一步是
 每条显示**已用百分比**、进度条、**重置时间**（一天内给倒计时，超过一天给日期）。
 月度那条额外显示剩余金额。
 
-颜色跟着用量走：低于 60% 绿、到 85% 黄、再高变红。
+颜色跟着用量走：低于 60% 绿、到 85% 黄、再高变红。（终端面板和 HTML 面板用更早的
+50 / 80 分档——状态栏是那个为"余光扫一眼"调过的，所以报警更晚。）
 
 没有滚动窗口的套餐（Provider、Enterprise）只显示余额。
-没有 API 权限的套餐（Go）什么都不显示——不报错、也不留空位。
+没有 API 权限的套餐（Go）在状态栏里什么都不显示——不报错、也不留空位；
+但你主动要终端面板时它会**如实报错**，因为那是你直接问的问题，沉默反而是错的。
 
 ## 没在用的时候它会自己藏起来
 
@@ -65,8 +74,12 @@ Grok 的插件格式里根本没有状态栏这一项）。所以最后一步是
 1. **本地路由自己的映射** —— `cc-switch` 这类工具会把
    `ANTHROPIC_DEFAULT_OPUS_MODEL` / `..._MODEL_NAME` 成对写进环境变量，
    脚本读这对值就知道真实上游是谁。这是路由自己的配置，不是推测。
-2. **会话记录** —— 每条消息实际用的模型（Claude Code 的 `message.model`、Grok 的 `modelId`）。
-3. **账号活跃度** —— 兜底，只在前两条都给不出结论时用。
+   （这条属于[推断而非实测](docs/FINDINGS.md)——万一拿不到，脚本会往下走而不是乱猜。）
+2. **宿主直接给的模型名。** Codex 的钩子把 `model` 作为纯字符串给（`"gpt-5.6-terra"`），
+   而且它的 `transcript_path` 是空的——没有这一级，Codex 永远判不出结果。
+   Claude Code 这里给的是对象，会直接跳到第 3 级。
+3. **会话记录** —— 每条消息实际用的模型（Claude Code 的 `message.model`、Grok 的 `modelId`）。
+4. **账号活跃度** —— 兜底，只在前三条都给不出结论时用。
 
 拿到的真实模型名去对照 Command Code 的公开模型目录（`/provider/v1/models`，免鉴权）。
 不在目录里 → 隐藏。
@@ -76,9 +89,12 @@ Grok 的插件格式里根本没有状态栏这一项）。所以最后一步是
 
 ## 命令
 
-每个平台还会装一个 `/quota` 命令，打印紧凑面板。
-注意这个**会经过模型**——它是提示词模板，要花一轮对话。
-状态栏才是免费的那条路；想让数字留在对话记录里时才用 `/quota`。
+Claude Code、Codex、Grok、ZCode 还会装一个 `/quota` 命令，打印紧凑面板。
+**这个会经过模型**——它是提示词模板，要花一轮对话；状态栏才是免费的那条路，
+`/quota` 是给"想让数字留在对话记录里"用的。
+
+pi 用的是 `/ccq-bar on|off|toggle|refresh|status`（扩展自己处理，不走模型），
+opencode 则完全没有命令——它的侧栏就是全部界面。
 
 ## 凭证
 
@@ -115,13 +131,16 @@ plugins/<agent>/         ← 每个平台一个薄适配器
 - Node 18+（脚本用；适配器本身不需要别的）
 - 有 API 权限的 Command Code 套餐——$1 的 Go 档没有
 - **Windows**：装了 Git Bash 时 Claude Code 经它调用状态栏命令，没装则走 PowerShell。
-  没装 Git Bash 每次重绘大约多花 100ms。
+  Git Bash 本身每次重绘约 29ms，PowerShell 大约是它的三倍——所以嫌状态栏迟钝就装 Git Bash。
 
 ## 关于"按当前速度会超限"的预警
 
-脚本会算一个速度外推，并且**只在 `--json` 里给出，不显示**。
-短样本外推几乎每次都会说"你要超了"——5 小时窗口刚开 25 分钟时，一段正常的使用
-就能推出 140%——而一条永远亮着的警告等于没有警告。
+脚本会算一个速度外推。**状态栏和 Codex 钩子里永远不显示它**；终端面板、`--compact`、
+`--md`、`--html` 仍会打印，`--json` 里也一直有。
+
+不让它进状态栏是有原因的：短样本外推几乎每次都会说"你要超了"——5 小时窗口刚开 25 分钟时，
+一段正常的使用就能推出 140%——而一条永远亮着的警告等于没有警告。这些面板本来就是你主动
+要来看的，多一行不碍事。
 
 ## 参与开发
 

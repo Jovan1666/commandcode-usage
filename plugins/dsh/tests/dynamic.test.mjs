@@ -423,10 +423,16 @@ console.log('a reading that straddles a billing boundary')
   })
 
   await checkAsync('a plan change mid-period is refused the same way', async () => {
-    // planId has already moved to Pro ($30 nominal) while the usage endpoint is
-    // still reporting the GOAT period's spend.
-    const r = await report(sample({ used: 69.5, remaining: 0.6, planId: 'individual-pro' }))
-    assert.equal(r.plan.name, 'Pro')
+    // planId has already moved to Max ($150 nominal) while the usage endpoint is
+    // still reporting the GOAT period's spend ($70.1 cap).
+    //
+    // This used to be written against Pro on the belief that Pro's nominal
+    // allowance was $30. It is $80 — and $70 against $80 is only a 12.5% gap,
+    // inside the ±25% tolerance, so that pairing is genuinely undetectable and
+    // was never a valid test of this behaviour. The bands have to be far enough
+    // apart for the check to have anything to bite on.
+    const r = await report(sample({ used: 69.5, remaining: 0.6, planId: 'individual-max' }))
+    assert.equal(r.plan.name, 'Max')
     assert.equal(r.monthly.capSuspect, true)
     assert.equal(r.monthly.percent, undefined)
   })

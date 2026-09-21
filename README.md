@@ -5,6 +5,8 @@ with reset times — **inside the coding agent you already have open**.
 
 Runs on your machine. No model round-trip, so **checking your quota costs no quota**.
 
+![The status line, at normal usage and when a window is nearly spent](docs/images/statusline-claude-code.png)
+
 ```
 CC GOAT │ 5h █▎░░░░░░░░ 12% 4h27m后重置 │ 周 █▏░░░░░░░░ 11% 09-27重置 │ 月 ▋░░░░░░░░░ 6% $66.03 10-20重置
 ```
@@ -17,20 +19,27 @@ CC GOAT │ 5h █▎░░░░░░░░ 12% 4h27m后重置 │ 周 █▏�
 
 ## Install
 
-Each agent has its own way of loading plugins, so pick yours.
-All of them end up running the same core script (`core/cc-usage.mjs`).
+Each agent has its own way of loading plugins, so pick yours. Six of the seven end up running
+the same core script (`core/cc-usage.mjs`); the DeepSeek Harness adapter keeps its own data
+layer, for the reason given under [Layout](#layout).
 
 | Agent | How | Persistent? |
 |---|---|---|
-| **Claude Code** | `/plugin marketplace add Jovan1666/commandcode-usage` then `/plugin install commandcode-usage`, then run `plugins/claude-code/scripts/setup.mjs` | ✅ status line |
+| **Claude Code** | `/plugin marketplace add Jovan1666/commandcode-usage` then `/plugin install commandcode-usage@commandcode-usage`, then `node ~/.claude/plugins/marketplaces/commandcode-usage/plugins/claude-code/scripts/setup.mjs` | ✅ status line |
 | **Codex CLI** | plugin marketplace (`.agents/plugins/marketplace.json`) — the bundled hook runs each turn; Codex will ask you to trust it | ⚠️ per-turn line |
 | **Grok Build** | `grok plugin marketplace add Jovan1666/commandcode-usage`, then run `plugins/grok/scripts/setup.mjs` | ✅ status line |
 | **opencode** | run `plugins/opencode/scripts/setup.mjs` | ✅ sidebar |
 | **pi** | `pi install ./commandcode-usage/plugins/pi`, or copy `index.ts` into `~/.pi/agent/extensions/` | ✅ above the input |
 | **DeepSeek Harness** | clone this repo, then `dsh plugin --profile web add ./commandcode-usage/plugins/dsh` (needs dsh `^0.1.5-rc.1`) | ✅ sidebar |
-| **ZCode** | `/plugin marketplace add Jovan1666/commandcode-usage` then install from it | ⚠️ command only |
+| **ZCode** | `/plugin marketplace add Jovan1666/commandcode-usage` then `/plugin install command-code-usage` (its marketplace and plugin name differ) | ⚠️ command only |
 
 Nothing here asks for your API key up front. The script finds it — see [Credentials](#credentials).
+
+The DeepSeek Harness card has its own three-state screenshot in
+[`plugins/dsh/assets/screenshot.png`](plugins/dsh/assets/screenshot.png) — collapsed badge, light expanded,
+and dark expanded. The other five platforms all render the same one line shown above, so they get text
+rather than a picture.
+
 
 ### Why some installs need a setup script
 
@@ -51,10 +60,14 @@ status line unless you pass `--force`, and `--remove` puts yours back.
 Each window shows **percent used**, a bar, and **when it resets** (a countdown under a day,
 a date beyond that). The monthly one also shows the credit left.
 
-Colors follow how full the window is: green under 60 %, amber to 85 %, red above.
+Colors follow how full the window is — green under 60 %, amber to 85 %, red above. (The
+terminal and HTML panels use a slightly earlier 50 / 80 split; the status line is the one that
+had to be tuned for a glance, so it warns later.)
 
 Plans with no rolling windows (Provider, Enterprise) show the balance alone.
-Plans without API access (Go) show nothing at all — no error, no empty box.
+Plans without API access (Go) render nothing at all in the status line — no error, no empty
+box. Ask for the terminal panel on such a plan and it *does* fail loudly, because there you
+asked a direct question and silence would be the wrong answer.
 
 ## It hides itself when you are not using it
 
@@ -64,9 +77,15 @@ The script decides **per turn** whether this session is actually routed there:
 1. **Your local router's own mapping** — tools like `cc-switch` write
    `ANTHROPIC_DEFAULT_OPUS_MODEL` / `..._MODEL_NAME` pairs into the env; the script reads the
    pair to learn the real upstream model. This is the router's own configuration, not a guess.
-2. **The session transcript** — the model each message actually used
+   (This one is an inference rather than a measurement — see
+   [what was verified](docs/FINDINGS.md) — so if it ever comes up empty the script falls
+   through to the next level rather than guessing.)
+2. **The model name the host hands over directly.** Codex's hook puts `model` in as a plain
+   string (`"gpt-5.6-terra"`) — and gives an *empty* `transcript_path`, so without this level
+   Codex would never resolve. Claude Code sends an object here, so it skips to level 3.
+3. **The session transcript** — the model each message actually used
    (Claude Code's `message.model`, Grok's `modelId`).
-3. **Account activity** — fallback, only when the two above say nothing.
+4. **Account activity** — fallback, only when the three above say nothing.
 
 The resolved model is checked against Command Code's public model catalog
 (`/provider/v1/models`, no auth needed). Not in the catalog → hidden.
@@ -77,9 +96,12 @@ Command Code's catalog), and those are deliberately **not guessed** — add your
 
 ## Commands
 
-Every agent also gets a `/quota` command that prints the compact panel.
-Note this one **does** go through the model — it is a prompt, so it costs a turn.
-The status line is the free path; use `/quota` when you want the numbers in the transcript.
+Claude Code, Codex, Grok and ZCode also get a `/quota` command that prints the compact panel.
+**That one does go through the model** — it is a prompt, so it costs a turn; the status line is
+the free path, and `/quota` is for when you want the numbers in the transcript.
+
+pi has `/ccq-bar on|off|toggle|refresh|status` instead (handled by the extension, no model
+turn), and the opencode adapter has no command at all — its sidebar is the whole surface.
 
 ## Credentials
 
@@ -117,14 +139,19 @@ without a package manager. **Edit `core/`, never a copy**, then run `node script
 - Node 18+ (for the script; the adapters themselves need nothing else)
 - A Command Code plan with API access — the `$1` Go tier does not have one
 - **Windows:** Claude Code runs status line commands through Git Bash when it is installed,
-  through PowerShell when it is not. Not having Git Bash costs roughly 100 ms per repaint.
+  through PowerShell when it is not. Git Bash itself costs ~29 ms per repaint, and PowerShell
+  roughly three times that — so if repaints feel slow, install Git Bash.
 
 ## A note on pacing warnings
 
-The script computes a burn-rate projection and exposes it in `--json`, but **does not show
-it**. Extrapolating from a short sample says "you will run out" almost every time — 25 minutes
-into a 5-hour window a normal burst projects to 140 % — and a warning that is always on is
-not a warning.
+The script computes a burn-rate projection. **The status line and the Codex hook never show
+it**; the terminal panel, `--compact`, `--md` and `--html` still print it, and `--json` always
+carries it.
+
+It stays out of the status line for a reason: extrapolating from a short sample says "you will
+run out" almost every time — 25 minutes into a 5-hour window a normal burst projects to 140 % —
+and a warning that is always on is not a warning. Where it *is* printed you asked for a panel,
+so the extra line costs you nothing.
 
 ## Contributing
 
