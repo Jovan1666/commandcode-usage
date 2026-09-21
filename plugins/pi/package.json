@@ -1,0 +1,14 @@
+{
+  "name": "pi-commandcode-usage",
+  "version": "1.0.0",
+  "description": "Command Code plan usage line for the pi coding agent: 5-hour, weekly and monthly windows above the input box.",
+  "type": "module",
+  "main": "index.ts",
+  "pi": { "extensions": ["./index.ts"] },
+  "author": { "name": "Jovan1666", "url": "https://github.com/Jovan1666" },
+  "license": "MIT",
+  "homepage": "https://github.com/Jovan1666/commandcode-usage",
+  "repository": "https://github.com/Jovan1666/commandcode-usage",
+  "keywords": ["pi", "pi-coding-agent", "command-code", "quota", "usage"],
+  "files": ["index.ts", "src/cc-usage.mjs", "README.md"]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "commandcode-usage",
+  "version": "1.0.0",
+  "description": "Show your Command Code plan usage inside Codex: a per-turn quota line, plus a /quota command for the full panel.",
+  "author": {
+    "name": "Jovan1666",
+    "url": "https://github.com/Jovan1666"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/Jovan1666/commandcode-usage",
+  "repository": "https://github.com/Jovan1666/commandcode-usage",
+  "commands": "./commands",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Command Code Usage",
+    "shortDescription": "Command Code plan usage (5-hour / weekly / monthly) in Codex.",
+    "category": "Utilities"
+  }
+}

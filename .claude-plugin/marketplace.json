@@ -1,0 +1,19 @@
+{
+  "name": "commandcode-usage",
+  "description": "Command Code plan usage in your agent's status line and conversation.",
+  "owner": {
+    "name": "Jovan1666",
+    "url": "https://github.com/Jovan1666"
+  },
+  "plugins": [
+    {
+      "name": "commandcode-usage",
+      "source": "./plugins/claude-code",
+      "version": "1.0.0",
+      "description": "Command Code plan usage: 5-hour, weekly and monthly windows with reset times, live in the status line. Runs locally — costs no tokens.",
+      "category": "utilities",
+      "homepage": "https://github.com/Jovan1666/commandcode-usage",
+      "author": { "name": "Jovan1666", "url": "https://github.com/Jovan1666" }
+    }
+  ]
+}

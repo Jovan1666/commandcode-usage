@@ -1,0 +1,44 @@
+{
+  "name": "command-code-usage",
+  "description": "Command Code plan usage for your coding agent: rolling 5-hour and weekly windows, monthly credits, reset times.",
+  "description_i18n": {
+    "en": "Command Code plan usage for your coding agent: rolling 5-hour and weekly windows, monthly credits, reset times.",
+    "zh-CN": "在编码 agent 里直接查看 Command Code 套餐用量：5 小时与每周滚动窗口、月度额度、重置时间。"
+  },
+  "plugins": [
+    {
+      "name": "command-code-usage",
+      "displayName": "Command Code Usage",
+      "displayName_i18n": {
+        "en": "Command Code Usage",
+        "zh-CN": "Command Code 额度面板"
+      },
+      "source": "./plugins/zcode",
+      "description": "See your Command Code plan usage right inside the conversation — 5-hour and weekly rolling windows, monthly credits or balance, with reset times. Requires a Command Code plan.",
+      "description_i18n": {
+        "en": "See your Command Code plan usage right inside the conversation — 5-hour and weekly rolling windows, monthly credits or balance, with reset times. Requires a Command Code plan.",
+        "zh-CN": "在对话里直接查看 Command Code 套餐用量——5 小时与每周滚动窗口、月度额度或余额，含重置时间。需要 Command Code 套餐。"
+      },
+      "version": "1.3.0",
+      "author": {
+        "name": "Jovan1666",
+        "url": "https://github.com/Jovan1666"
+      },
+      "homepage": "https://github.com/Jovan1666/commandcode-usage",
+      "repository": "https://github.com/Jovan1666/commandcode-usage",
+      "license": "MIT",
+      "keywords": [
+        "quota",
+        "usage",
+        "command-code",
+        "billing",
+        "credits",
+        "rate-limit",
+        "limits",
+        "monitoring"
+      ],
+      "category": "utilities",
+      "requiresPaidPlan": true
+    }
+  ]
+}

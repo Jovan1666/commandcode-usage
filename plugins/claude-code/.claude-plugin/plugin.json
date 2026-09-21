@@ -1,0 +1,11 @@
+{
+  "name": "commandcode-usage",
+  "version": "1.0.0",
+  "description": "Show your Command Code plan usage in the Claude Code status line: 5-hour, weekly and monthly windows with reset times. Runs locally — costs no tokens.",
+  "author": { "name": "Jovan1666", "url": "https://github.com/Jovan1666" },
+  "license": "MIT",
+  "homepage": "https://github.com/Jovan1666/commandcode-usage",
+  "repository": "https://github.com/Jovan1666/commandcode-usage",
+  "commands": "./commands",
+  "hooks": "./hooks/hooks.json"
+}
