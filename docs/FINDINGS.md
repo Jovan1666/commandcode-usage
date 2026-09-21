@@ -204,17 +204,22 @@ Windows 路径>` 把"工作目录是 POSIX 路径"这个变量排掉，再逐个
 | `D:/…/node.exe --version` | ✅ |
 | `C:/Windows/System32/cmd.exe /c echo a b c d e` | ✅ |
 | `C:/Windows/System32/cmd.exe /c echo a:b` | ✅ |
+| `…/Temp/sp ace/cc-usage.cmd`（**路径含空格，不加引号**） | ✅ 渲染出额度行 |
+| `"…/Temp/sp ace/cc-usage.cmd"`（同一条路径加上引号） | ❌ os error 123 |
 | `C:/Windows/System32/cmd.exe /c echo C:/Windows/Temp` | ❌ os error 123 |
 | `node C:/…/cc-usage.mjs --statusline --rows 1` | ❌ os error 123 |
 | `D:/…/node.exe C:/…/cc-usage.mjs --statusline --rows 1` | ❌ os error 123 |
 
 三条结论，都是实测：
 
-1. **程序名可以是一条裸的绝对路径，参数不行。** 参数里只要出现盘符绝对路径（正反斜杠
-   一样），就 123。相对参数没事，多个普通参数也没事，单个冒号也没事。
-2. **给程序名加引号同样 123**——引号被当成了路径的一部分。官方文档那句"路径含空格就照
-   prompt 里那样加引号"在 Windows 上不成立。
-3. 所以在 Windows 上 `command` 只能写**一条不带参数的裸路径**。
+1. **Grok 先拿整条 `command` 当一个路径试**，是存在的文件就直接执行。所以空格不是
+   问题：`…/sp ace/cc-usage.cmd` 这种裸写照样跑起来。
+2. 不是路径，才按空白切成"程序 + 参数"。程序名可以是裸的绝对路径；但**参数里出现盘符
+   绝对路径**（正反斜杠一样）就 123。相对参数没事，多个普通参数没事，单个冒号也没事。
+3. **加引号一定 123**——引号成了路径的一部分，整条既不是合法路径、切出来的程序名也非法。
+   官方文档那句"路径含空格就照 prompt 里那样加引号"在 Windows 上不成立，含空格的路径
+   **不加引号反而是对的**。
+4. 所以 Windows 上 `command` 写**一条不加引号的裸路径**最稳，哪怕路径里有空格。
 
 做法：`setup.mjs` 在 Windows 上生成一个 `cc-usage.cmd` 放在 `cc-usage.mjs` 旁边，
 `config.toml` 里只写这个批处理的路径，node 调用写在批处理内部、用 `%~dp0` 定位脚本。
@@ -228,9 +233,9 @@ Windows 路径>` 把"工作目录是 POSIX 路径"这个变量排掉，再逐个
   带括号，会把块提前闭合，报 `\NVIDIA was unexpected at this time.`。诊断代码自己把
   包装搞崩过一次。
 
-已知限制：Grok 把这条命令当程序名直接起、不经过 shell，所以**安装路径里带空格的**
-（比如用户名里就带空格）暂时装不了。加引号是死路（见上），`setup.mjs` 会明确
-警告，而不是留一条永远不出现的状态栏。
+要区分开的是：**路径里有空格不是问题，引号才是。** 这条一开始判断反了，是最后补测才
+纠正过来的——Grok 既然先拿整条命令当路径试，一个带空格的裸路径本来就是合法路径。所以
+`setup.mjs` 只写一条不加引号的裸路径，不需要对安装位置提任何要求。
 
 ## 6. 待观察清单：官方改了什么，我们要跟着改什么
 

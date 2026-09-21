@@ -201,22 +201,11 @@ if (occupied) {
 
 fs.mkdirSync(CONFIG_DIR, { recursive: true });
 if (IS_WINDOWS) {
-  // Grok 拿这条命令当程序名直接起，不经过 shell，所以路径里有空格就会被它
-  // 按空白切开、后半截当成参数——而加引号同样是死路（见上）。这种家目录
-  // （比如用户名里就带空格）暂时装不了，明说而不是留一个静默失效的状态栏。
+  // 路径里有空格没关系——Grok 先拿整条 command 当路径试，一个带空格的裸路径本来就是
+  // 合法路径；反倒是加引号会 123。所以这里只写文件，不对安装位置做任何要求。
   const text = launcherText();
   if (!/^[\x20-\x7e\r\n]*$/.test(text)) fail('包装脚本出现了非 ASCII 字符，这在 cmd.exe 里会被解析成命令。');
   fs.writeFileSync(LAUNCHER, text, 'utf8');
-  if (/\s/.test(COMMAND)) {
-    console.error(
-      [
-        `注意：包装脚本的路径里有空格，Grok 在 Windows 上起不动它。`,
-        `  ${COMMAND}`,
-        '把插件挪到不含空格的目录（或换一个用户名不含空格的账户）再装一次。',
-        '',
-      ].join('\n'),
-    );
-  }
 }
 fs.writeFileSync(CONFIG, upsertSection(config, SECTION, SECTION_BODY), 'utf8');
 

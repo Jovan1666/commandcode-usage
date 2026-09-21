@@ -53,9 +53,8 @@ On Windows the Grok script writes one more file: a small `cc-usage.cmd` beside
 `cc-usage.mjs`, with the config naming that batch and nothing else. Grok starts `command`
 through `CreateProcess`, which refuses an argument that is an absolute path (`os error 123`)
 and refuses a quoted program name just the same, so a bare executable path is the only form
-that survives — the `node` call lives inside the batch. An install path containing a space
-cannot be launched this way, and the script says so rather than leaving a row that never
-appears.
+that survives — the `node` call lives inside the batch, and the config names it unquoted,
+which also keeps a path containing a space working.
 
 ## What it shows
 
