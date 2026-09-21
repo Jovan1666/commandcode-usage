@@ -43,7 +43,7 @@ providers 总数: 222
 
 ---
 
-## 2. Claude Code 的两个坑（本机实测）
+## 2. Claude Code 的三个坑（本机实测）
 
 ### 2.1 statusLine 的 `model.id` 是**本地别名**，不是真实上游
 
@@ -74,6 +74,33 @@ ANTHROPIC_DEFAULT_OPUS_MODEL_NAME = deepseek/deepseek-v4.1-flash
 
 另外：`rate_limits` 只对 claude.ai 一方订阅出现，第三方套餐**永远不会有**——
 所以"顺手拿官方额度字段"这条路对 CommandCode 是死的。
+
+### 2.3 `context_window` 是**账本**，不是自动压缩的预算（2026-09-21 验证）
+
+同一次会话里两处同时抓：`context_window.context_window_size` 报 **1,000,000**
+（settings.json 里设了 `contextWindowTokens`），而自动压缩实际在 **约 18.8 万** token 处 fire。
+
+| 上下文（transcript 里的输入 token） | 状态栏 `📊` 那格 | 自动压缩 |
+|---|---|---|
+| 61,510 | 6% | 未触发 |
+| 158,194 | **16%** | 未触发 |
+| **188,166** | ~19% | **fire**（`trigger=auto`，压完剩 34,267） |
+
+158,194 对应 16% ⇒ 那个百分比的分母是**账本窗口（100 万）**，不是压缩点：
+**压缩发生在该数字约 19% 的时候**。拿它估"还剩多少余量"会严重高估。
+
+`autoCompactWindow` 改不动它。同一天四次对照，压缩点分别是 187,946 / 188,166 / 188,262
+（不设）与 187,779（`autoCompactWindow = 100000`）——设定值差一半，压缩点纹丝不动
+（`CLAUDE_CODE_AUTO_COMPACT_WINDOW` 同样无效）。真正生效的窗口约 20 万，
+与 `.claude.json` 里的 GrowthBook 缓存 `tengu_hawthorn_window = 200000` 吻合。
+
+两点方法上的收获：
+
+- 判"压没压"要看 transcript 里的 `compact_boundary` 事件（`compactMetadata.trigger` 与
+  `preTokens`），**别读界面措辞**——底栏那行百分比在 tmux 抓屏里经常根本不渲染，
+  照它推断会得出完全相反的结论。
+- 这是"本机 + 本机这条代理路由"的实测。报出的模型名与上游真实模型不同时（见 §2.1），
+  生效窗口跟哪个走尚无结论。
 
 ---
 
@@ -250,6 +277,7 @@ Windows 路径>` 把"工作目录是 POSIX 路径"这个变量排掉，再逐个
 | Codex 的 `status_line` 开放外部命令 | Codex 也能做常驻，不必用 hook 兜底（现在只能每轮弹一行） |
 | 套餐档位/额度调整 | `PLANS` 表（`core/cc-usage.mjs` 顶部），来源是官方定价页 |
 | 计费周期字段变化 | `activityOf()` 里的请求数对比（跨周期归零已按"变了就算活跃"处理） |
+| Claude Code 让 `context_window` 反映压缩预算，或 `autoCompactWindow` 开始生效 | §2.3 的结论作废；那时"离压缩还有多少"可以直接读字段 |
 
 ---
 
@@ -272,6 +300,8 @@ Windows 路径>` 把"工作目录是 POSIX 路径"这个变量排掉，再逐个
   `setWidget` 的组件工厂重载、`WidgetPlacement`、`session_start`/`agent_settled`/`session_shutdown`
 - **dsh 的卡片真的渲染出来了**（Playwright 抓屏确认，位置在侧栏「设置」上方），
   数字与本仓库 core 完全一致
+- Claude Code 的 `context_window`（账本，本机 100 万）与自动压缩的实际触发点
+  （约 18.8 万）差五倍；`autoCompactWindow` 是空操作（见 §2.3）
 
 **实测踩到的坑：dsh 插件的版本门槛很硬，而且症状具有误导性**
 
@@ -304,3 +334,15 @@ Cannot read properties of undefined (reading 'register')
   机制上讲得通（statusLine 是宿主子进程，官方文档明确 `env` 设置对子进程生效），
   但没在真实的 statusLine 调用里 dump 过环境变量。
   **兜底方案**：拿不到就退到 transcript，功能不受影响。
+
+**决定：dsh 继续不共用 core**（2026-09-21 复核，非疏漏）
+
+`plugins/dsh/quota.mjs` 是一个自成一体的数据层：自带凭据发现、端点表、套餐表、
+`CLI_VERSION`，以及被 `client.js` / `index.js` / `cli/` 依赖的那套导出契约。
+core 那边是两千行的状态栏／路由引擎，导出（`collectUsage` / `normalize` /
+`routeDecision` / `statuslineMode` …）与 dsh 需要的东西对不上。硬换过去要重写
+宿主半边的契约，换来的只是"少一个维护点"；而最容易漂移的那部分——两张套餐表——
+已经由 `plans` 套件逐档比对（`scripts/check.mjs`）。
+
+会推翻这个决定的条件：core 抽出 dsh 也用得上的**数据层**（凭据 + 额度窗口），
+而不是现在这个"状态栏引擎"；或者 dsh 自己那套离线校验不再是它的契约。
