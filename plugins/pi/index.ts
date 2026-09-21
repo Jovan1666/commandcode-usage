@@ -27,16 +27,34 @@ const FETCH_TIMEOUT_MS = 15_000;
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CANDIDATES = [join(HERE, 'cc-usage.mjs'), join(HERE, 'src', 'cc-usage.mjs')];
 
+/** pi 传进来的 TUI 句柄。只留这个，不留 ctx——见 installWidget 上面的注释。 */
+interface TuiLike {
+  requestRender(force?: boolean): void;
+}
+
+type WidgetFactory = (tui: TuiLike, theme: unknown) => { render(): string[]; invalidate(): void };
+
 interface CtxLike {
   ui?: {
-    setWidget(key: string, content: string[] | undefined, options?: { placement: 'aboveEditor' | 'belowEditor' }): void;
+    setWidget(key: string, content: string[] | WidgetFactory | undefined, options?: { placement: 'aboveEditor' | 'belowEditor' }): void;
     notify?(message: string, type?: 'info' | 'warning' | 'error'): void;
   };
 }
 
 interface PiLike {
   on(event: string, handler: (_event: unknown, ctx: CtxLike) => void | Promise<void>): void;
-  registerCommand(name: string, opts: { description: string; handler: (_args: string, ctx: CtxLike) => void | Promise<void> }): void;
+  registerCommand(
+    name: string,
+    opts: { description: string; handler: (args: string, ctx: CtxLike) => void | Promise<void> },
+  ): void;
+}
+
+function scriptPath(): string | null {
+  // 两种布局都可能：扩展直接放在插件目录里，或放在 src/ 下。
+  for (const candidate of CANDIDATES) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return null;
 }
 
 /**
@@ -53,14 +71,6 @@ function nodeBinary(): string | null {
     if (existsSync(candidate)) return candidate;
   }
   return /node(\.exe)?$/i.test(process.execPath) ? process.execPath : null;
-}
-
-function scriptPath(): string | null {
-  // 两种布局都可能：扩展直接放在插件目录里，或放在 src/ 下。
-  for (const candidate of CANDIDATES) {
-    if (existsSync(candidate)) return candidate;
-  }
-  return null;
 }
 
 /** 跑一次核心脚本，拿状态栏那几行。 */
@@ -84,26 +94,39 @@ function readLines(): Promise<string[] | null> {
 
 export default function commandCodeUsage(pi: PiLike): void {
   let enabled = true;
+  let lines: string[] | null = null;
   let timer: ReturnType<typeof setInterval> | null = null;
   let inFlight: Promise<void> | null = null;
-  let lastLines: string[] | null = null;
-  let lastCtx: CtxLike | null = null;
 
-  const paint = (ctx: CtxLike | null) => {
-    if (!ctx?.ui?.setWidget) return;
-    if (!enabled || !lastLines) {
-      ctx.ui.setWidget(WIDGET_KEY, undefined, { placement: 'belowEditor' });
+  // 只留 TUI 句柄，**不留在事件回调里拿到的 ctx**。
+  // pi 明确禁止跨会话持有 ctx：newSession / fork / switchSession / reload 之后它就成了
+  // 过期对象，再用会直接抛 "This extension ctx is stale after session replacement or reload"。
+  // 组件工厂收到的 tui 属于渲染器，可以长期持有——刷新时只碰它。
+  let tui: TuiLike | null = null;
+
+  /**
+   * 装或更新 widget。必须在**本次事件自己拿到的** ctx 上调用，不能拿旧的。
+   * 用组件工厂（而不是字符串数组）是为了拿到 tui 句柄，之后刷新数据就不必再碰 ctx。
+   */
+  const installWidget = (ctx: CtxLike) => {
+    if (!enabled) {
+      ctx.ui?.setWidget?.(WIDGET_KEY, undefined);
       return;
     }
-    ctx.ui.setWidget(WIDGET_KEY, lastLines, { placement: 'belowEditor' });
+    ctx.ui?.setWidget?.(WIDGET_KEY, (handle) => {
+      tui = handle;
+      return { render: () => lines ?? [], invalidate: () => {} };
+    }, { placement: 'belowEditor' });
   };
 
-  async function refresh(ctx: CtxLike | null): Promise<void> {
+  async function refresh(): Promise<void> {
     if (inFlight) return inFlight;
     inFlight = (async () => {
       try {
-        lastLines = await readLines();
-        paint(ctx ?? lastCtx);
+        const next = await readLines();
+        if (next) lines = next;
+        // 只让渲染器重画，不接触 ctx。
+        tui?.requestRender();
       } finally {
         inFlight = null;
       }
@@ -113,19 +136,18 @@ export default function commandCodeUsage(pi: PiLike): void {
 
   function startTimer() {
     if (timer) clearInterval(timer);
-    timer = setInterval(() => { void refresh(null); }, REFRESH_MS);
+    timer = setInterval(() => { void refresh(); }, REFRESH_MS);
   }
 
   pi.on('session_start', (_e, ctx) => {
-    lastCtx = ctx;
-    void refresh(ctx);
+    installWidget(ctx);
+    void refresh();
     startTimer();
   });
 
   // 一轮对话刚结束时最该看一眼额度，所以这里补刷一次（定时器之外）。
-  pi.on('agent_settled', (_e, ctx) => {
-    lastCtx = ctx;
-    if (enabled) void refresh(ctx);
+  pi.on('agent_settled', () => {
+    if (enabled) void refresh();
   });
 
   pi.on('session_shutdown', () => {
@@ -139,26 +161,30 @@ export default function commandCodeUsage(pi: PiLike): void {
       const cmd = (args || '').trim().split(/\s+/)[0] || 'status';
       if (cmd === 'on') {
         enabled = true;
-        await refresh(ctx);
+        await refresh();
+        installWidget(ctx);
         startTimer();
         ctx.ui?.notify?.('Command Code 额度行已开启', 'info');
       } else if (cmd === 'off') {
         enabled = false;
-        paint(ctx);
+        installWidget(ctx);
         if (timer) clearInterval(timer);
         timer = null;
         ctx.ui?.notify?.('Command Code 额度行已关闭', 'info');
       } else if (cmd === 'toggle') {
         enabled = !enabled;
-        if (enabled) { await refresh(ctx); startTimer(); } else { paint(ctx); if (timer) clearInterval(timer); timer = null; }
+        if (enabled) await refresh();
+        installWidget(ctx);
+        if (enabled) startTimer();
+        else if (timer) { clearInterval(timer); timer = null; }
         ctx.ui?.notify?.(`Command Code 额度行已${enabled ? '开启' : '关闭'}`, 'info');
       } else if (cmd === 'refresh') {
-        await refresh(ctx);
+        await refresh();
         ctx.ui?.notify?.('已刷新', 'info');
       } else {
         ctx.ui?.notify?.(
           scriptPath()
-            ? `Command Code 额度行\n  状态: ${enabled ? '开启' : '关闭'}\n  数据: ${lastLines ? lastLines.join(' / ') : '尚未取到'}`
+            ? `Command Code 额度行\n  状态: ${enabled ? '开启' : '关闭'}\n  数据: ${lines ? lines.join(' / ') : '尚未取到'}`
             : 'Command Code 额度行\n  找不到 cc-usage.mjs——插件目录可能不完整',
           'info',
         );

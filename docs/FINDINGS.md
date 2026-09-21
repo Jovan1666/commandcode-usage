@@ -136,7 +136,7 @@ deepseek-v4-pro | deepseek-v4-flash | deepseek-v4.1-flash
 | **Claude Code** | ✅ | `settings.json` 的 `statusLine`，支持多行 + ANSI + `refreshInterval` | ✅ 外部命令 |
 | **Grok Build** | ✅ | `[ui.status_line]` `type="command"` | ✅ 外部命令 |
 | **opencode** | ✅ | 11 个官方 TUI 插槽（`sidebar_content` / `session_prompt_right` / …），SolidJS 组件 | ✅ 进程内插件 |
-| **pi** | ✅ | `setWidget({ placement: "belowEditor" })` | ✅ 扩展 |
+| **pi** | ✅ | `setWidget` 的组件工厂重载 + `placement: "belowEditor"`（**已抓屏确认**） | ✅ 扩展 |
 | **Codex** | ❌ | `tui.status_line` 是**封闭枚举**（31 个内置项，无外部脚本口子） | ❌ |
 | | | 替代：`UserPromptSubmit` 钩子每轮弹一行（**已实测可触发**，见 §5.1） | ✅ 钩子 |
 | **DeepSeek Harness** | ✅ | 侧边栏插槽 | ✅ 插件 |
@@ -215,6 +215,16 @@ hooks.UserPromptSubmit = [{ command = "node …" }]
 - Codex 的 `UserPromptSubmit` 钩子确实会触发；必须用嵌套的 MatcherGroup 形状，
   扁平形状配置能加载但不生效（见 §5.1）
 - Codex 钩子的 stdin 给 `model` 字符串、`transcript_path` 为空
+- **pi 的 widget 真的渲染出来了**（tmux 抓屏确认，位置在输入框与默认 footer 之间）
+- pi 的扩展 API 与官方类型逐条对上：入口 `ExtensionFactory`、
+  `setWidget` 的组件工厂重载、`WidgetPlacement`、`session_start`/`agent_settled`/`session_shutdown`
+
+**实测踩到的坑：pi 禁止跨会话持有 ctx**
+
+用旧 `ctx` 调任何 UI 方法会抛
+`This extension ctx is stale after session replacement or reload`——**这一点在类型定义里看不出来，
+只有真跑才会暴露**。正确写法是用 `setWidget` 的组件工厂形式拿 `tui` 句柄长期持有，
+刷新时只调 `tui.requestRender()`，绝不碰 ctx。
 
 **推断**（机制清楚，但没单独跑一轮验证）
 - statusLine 子进程能否继承 `ANTHROPIC_DEFAULT_*_MODEL_NAME`。

@@ -26,7 +26,7 @@ All of them end up running the same core script (`core/cc-usage.mjs`).
 | **Codex CLI** | plugin marketplace (`.agents/plugins/marketplace.json`) — the bundled hook runs each turn; Codex will ask you to trust it | ⚠️ per-turn line |
 | **Grok Build** | `grok plugin marketplace add Jovan1666/commandcode-usage`, then run `plugins/grok/scripts/setup.mjs` | ✅ status line |
 | **opencode** | run `plugins/opencode/scripts/setup.mjs` | ✅ sidebar |
-| **pi** | `pi install <this repo>/plugins/pi`, or copy `index.ts` into `~/.pi/agent/extensions/` | ✅ above the input |
+| **pi** | `pi install ./commandcode-usage/plugins/pi`, or copy `index.ts` into `~/.pi/agent/extensions/` | ✅ above the input |
 | **DeepSeek Harness** | clone this repo, then `dsh plugin --profile web add ./commandcode-usage/plugins/dsh` | ✅ sidebar |
 | **ZCode** | `/plugin marketplace add Jovan1666/commandcode-usage` then install from it | ⚠️ command only |
 

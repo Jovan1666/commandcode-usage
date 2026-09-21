@@ -26,7 +26,7 @@ CC GOAT │ 5h █▎░░░░░░░░ 12% 4h27m后重置 │ 周 █▏�
 | **Codex CLI** | 插件市场（`.agents/plugins/marketplace.json`），自带的钩子每轮触发；Codex 会先问你信不信任它 | ⚠️ 每轮一行 |
 | **Grok Build** | `grok plugin marketplace add Jovan1666/commandcode-usage`，然后跑 `plugins/grok/scripts/setup.mjs` | ✅ 状态栏 |
 | **opencode** | 跑 `plugins/opencode/scripts/setup.mjs` | ✅ 侧栏 |
-| **pi** | `pi install <本仓库>/plugins/pi`，或把 `index.ts` 拷进 `~/.pi/agent/extensions/` | ✅ 输入框上方 |
+| **pi** | `pi install ./commandcode-usage/plugins/pi`，或把 `index.ts` 拷进 `~/.pi/agent/extensions/` | ✅ 输入框上方 |
 | **DeepSeek Harness** | 克隆本仓库后 `dsh plugin --profile web add ./commandcode-usage/plugins/dsh` | ✅ 侧栏 |
 | **ZCode** | `/plugin marketplace add Jovan1666/commandcode-usage` 再从市场里装 | ⚠️ 只能按需调用 |
 
