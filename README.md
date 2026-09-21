@@ -49,6 +49,14 @@ Grok's plugin format has no status-line slot). So the last step is a script that
 that one setting for you. It backs up what was there, refuses to overwrite someone else's
 status line unless you pass `--force`, and `--remove` puts yours back.
 
+On Windows the Grok script writes one more file: a small `cc-usage.cmd` beside
+`cc-usage.mjs`, with the config naming that batch and nothing else. Grok starts `command`
+through `CreateProcess`, which refuses an argument that is an absolute path (`os error 123`)
+and refuses a quoted program name just the same, so a bare executable path is the only form
+that survives — the `node` call lives inside the batch. An install path containing a space
+cannot be launched this way, and the script says so rather than leaving a row that never
+appears.
+
 ## What it shows
 
 | Window | Meaning | On GOAT |

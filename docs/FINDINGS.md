@@ -134,7 +134,7 @@ deepseek-v4-pro | deepseek-v4-flash | deepseek-v4.1-flash
 | 宿主 | 有常驻位 | 机制 | 能塞自己的脚本 |
 |---|---|---|---|
 | **Claude Code** | ✅ | `settings.json` 的 `statusLine`，支持多行 + ANSI + `refreshInterval` | ✅ 外部命令 |
-| **Grok Build** | ✅ | `[ui.status_line]` `type="command"` | ✅ 外部命令 |
+| **Grok Build** | ✅ | `[ui.status_line]` `type="command"`（**已抓屏确认**；Windows 上要多一层 `.cmd`，见 §5.2） | ✅ 外部命令 |
 | **opencode** | ✅ | 11 个官方 TUI 插槽（`sidebar_content` / `session_prompt_right` / …），SolidJS 组件 | ✅ 进程内插件 |
 | **pi** | ✅ | `setWidget` 的组件工厂重载 + `placement: "belowEditor"`（**已抓屏确认**） | ✅ 扩展 |
 | **Codex** | ❌ | `tui.status_line` 是**封闭枚举**（31 个内置项，无外部脚本口子） | ❌ |
@@ -184,6 +184,53 @@ hooks.UserPromptSubmit = [{ command = "node …" }]
 自动化里记得 `< /dev/null`。
 
 ---
+
+### 5.2 Grok 在 Windows 上起不动"带绝对路径参数"的命令（2026-09-21 验证）
+
+Grok 的状态栏命令在 POSIX 上是交给 `sh -c` 跑的，Windows 上没有 sh。但**失败原因不是没有 sh**：
+
+```
+[status line: could not start the script: 文件名、目录名或卷标语法不正确。 (os error 123)]
+```
+
+`os error 123` 是 `ERROR_INVALID_NAME`，从 CreateProcess 出来的。先用 `grok --cwd <真实
+Windows 路径>` 把"工作目录是 POSIX 路径"这个变量排掉，再逐个变量对测（grok 1.0.30）：
+
+| command 写法 | 结果 |
+|---|---|
+| `C:/Windows/System32/hostname.exe` | ✅ 渲染出主机名 |
+| `C:/Windows/System32/cmd.exe /c echo HIB` | ✅ 渲染出 `HIB` |
+| `"C:/Windows/System32/hostname.exe"` | ❌ os error 123 |
+| `D:/…/node.exe --version` | ✅ |
+| `C:/Windows/System32/cmd.exe /c echo a b c d e` | ✅ |
+| `C:/Windows/System32/cmd.exe /c echo a:b` | ✅ |
+| `C:/Windows/System32/cmd.exe /c echo C:/Windows/Temp` | ❌ os error 123 |
+| `node C:/…/cc-usage.mjs --statusline --rows 1` | ❌ os error 123 |
+| `D:/…/node.exe C:/…/cc-usage.mjs --statusline --rows 1` | ❌ os error 123 |
+
+三条结论，都是实测：
+
+1. **程序名可以是一条裸的绝对路径，参数不行。** 参数里只要出现盘符绝对路径（正反斜杠
+   一样），就 123。相对参数没事，多个普通参数也没事，单个冒号也没事。
+2. **给程序名加引号同样 123**——引号被当成了路径的一部分。官方文档那句"路径含空格就照
+   prompt 里那样加引号"在 Windows 上不成立。
+3. 所以在 Windows 上 `command` 只能写**一条不带参数的裸路径**。
+
+做法：`setup.mjs` 在 Windows 上生成一个 `cc-usage.cmd` 放在 `cc-usage.mjs` 旁边，
+`config.toml` 里只写这个批处理的路径，node 调用写在批处理内部、用 `%~dp0` 定位脚本。
+这样 `--rows` 之类的参数照常生效，插件目录被搬走也不用重装。
+
+写批处理时踩到的两个坑，都写进生成器里了：
+
+- **批处理必须纯 ASCII。** cmd.exe 用 OEM 代码页读它，一句 UTF-8 中文 `rem` 会变成它要去
+  执行的命令，整行状态栏消失（第一次实测就是这么挂的）。
+- **不要在 `( … )` 块里 `echo %PATH%`。** PATH 里的 `Program Files (x86)`、NVIDIA 目录
+  带括号，会把块提前闭合，报 `\NVIDIA was unexpected at this time.`。诊断代码自己把
+  包装搞崩过一次。
+
+已知限制：Grok 把这条命令当程序名直接起、不经过 shell，所以**安装路径里带空格的**
+（比如用户名里就带空格）暂时装不了。加引号是死路（见上），`setup.mjs` 会明确
+警告，而不是留一条永远不出现的状态栏。
 
 ## 6. 待观察清单：官方改了什么，我们要跟着改什么
 

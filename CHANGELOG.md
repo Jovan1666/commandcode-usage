@@ -25,7 +25,7 @@ First release of the monorepo. Seven adapters, one core.
 |---|---|---|
 | Claude Code | status line (multi-line, ANSI) | `setup.mjs` merges with an existing status line and restores it on `--remove` |
 | opencode | TUI sidebar section | plain JS, no build step |
-| Grok Build | `[ui.status_line]` command row | `setup.mjs` edits `config.toml` |
+| Grok Build | `[ui.status_line]` command row | `setup.mjs` edits `config.toml` and reinstalls cleanly after `--remove`; on Windows it also writes a `.cmd` launcher, because Grok cannot start a command that carries an absolute-path argument |
 | pi | widget above the editor | `/ccq-bar on\|off\|toggle\|refresh\|status` |
 | Codex CLI | `UserPromptSubmit` hook | one line per turn, `systemMessage` so it stays out of the model's context |
 | DeepSeek Harness | sidebar card | keeps its own data layer — see the note below |
