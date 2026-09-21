@@ -126,7 +126,7 @@ function sampler(samples) {
 /** Pull one report from a state sequence. */
 function report(samples, index = 0) {
   const { fetchImpl } = sampler(Array.isArray(samples) ? samples : [samples])
-  return fetchQuotaReport({ apiKey: 'test-key', fetchImpl, apiBase: 'https://api.commandcode.ai' })
+  return fetchQuotaReport({ apiKey: 'demo-key', fetchImpl, apiBase: 'https://api.commandcode.ai' })
 }
 
 /** Every finite number in a report, with its dotted path, for NaN sweeps. */

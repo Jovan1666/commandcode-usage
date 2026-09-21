@@ -236,7 +236,8 @@ const TEXT_CONFIGS = [
   '~/.grok/config.toml',
 ];
 
-/** apiKey: user_xxx / apiKey = "user_xxx" / apiKeyEnv: NAME —— 只认这三种写法。 */
+/** 三种写法都认：apiKeyEnv 引用环境变量名、apiKey 直接写值、顶层 apiKey 键。
+ *  直接写值的要过 KEY_SHAPE（user_ / cc_ 前缀加 8 位以上）。 */
 function keyFromLine(line) {
   const envRef = line.match(/apiKeyEnv\s*[:=]\s*["']?([A-Za-z0-9_]+)["']?/i);
   if (envRef) return { envName: envRef[1] };

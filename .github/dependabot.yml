@@ -1,0 +1,23 @@
+version: 2
+
+updates:
+  # CI 里的 Action 全部固定到提交。固定了就得有人推着它们往前走，否则版本会
+  # 冻在某个提交上——Dependabot 认得 `uses: owner/action@<sha>  # vX.Y.Z` 这种
+  # 写法，会带着版本注释一起更新。
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+      include: scope
+
+  # dsh 那半边声明的 React 是这个仓库里唯一真正的依赖（客户端组件测试与预览页
+  # 会装它）。测试用的那份在 .devdeps/ 下，是 CI 现装的，不在这里管。
+  - package-ecosystem: npm
+    directory: /plugins/dsh
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope

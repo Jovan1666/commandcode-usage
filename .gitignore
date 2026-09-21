@@ -13,6 +13,7 @@ Thumbs.db
 # dsh 的预览页构建产物（preview/build.mjs 生成，里面含本机绝对路径）
 plugins/dsh/preview/index.html
 docs/images/_*.html
+plugins/codex/assets/_screenshot.html
 
 # Grok 在 Windows 上的批处理包装（setup.mjs 生成，内容随 --rows 变）
 plugins/grok/scripts/cc-usage.cmd

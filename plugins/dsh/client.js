@@ -77,9 +77,9 @@ window.__ModuleLoader__.load({
     const BILLING_URL = 'https://commandcode.ai/pricing'
 
     const LEVELS = [
-      { below: 60, token: 'var(--dsw-alias-state-success-primary)' },
-      { below: 85, token: 'var(--dsw-alias-state-warn-primary)' },
-      { below: Number.POSITIVE_INFINITY, token: 'var(--dsw-alias-state-error-primary)' },
+      { below: 60, color: 'var(--dsw-alias-state-success-primary)' },
+      { below: 85, color: 'var(--dsw-alias-state-warn-primary)' },
+      { below: Number.POSITIVE_INFINITY, color: 'var(--dsw-alias-state-error-primary)' },
     ]
 
     /** Display order: the shortest window first, the monthly budget last. */
@@ -219,7 +219,7 @@ window.__ModuleLoader__.load({
     function levelToken(percent) {
       if (percent === undefined) return 'var(--dsw-alias-label-caption)'
       const level = LEVELS.find((entry) => percent < entry.below)
-      return level === undefined ? LEVELS[LEVELS.length - 1].token : level.token
+      return level === undefined ? LEVELS[LEVELS.length - 1].color : level.color
     }
 
     function money(value) {

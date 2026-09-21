@@ -76,7 +76,7 @@ function stubFetch() {
  * @returns the plugin module namespace.
  */
 function loadHostHalf() {
-  process.env.COMMANDCODE_API_KEY = 'user_test_key'
+  process.env.COMMANDCODE_API_KEY = 'demo-test-key'
   return import(`../index.js?t=${String(Date.now())}-${String(Math.random())}`)
 }
 
@@ -581,7 +581,7 @@ console.log('the snapshot file carries its account fingerprint')
     assert.equal(typeof written.fingerprint, 'string')
     assert.equal(written.fingerprint.length, 16)
     assert.equal(written.report.monthly.used, 67.68)
-    assert.equal(JSON.stringify(written).includes('user_test_key'), false, 'the key itself is never written')
+    assert.equal(JSON.stringify(written).includes('demo-test-key'), false, 'the key itself is never written')
   })
 }
 

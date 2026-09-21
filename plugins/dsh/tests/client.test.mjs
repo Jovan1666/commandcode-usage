@@ -14,6 +14,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
+import vm from 'node:vm'
 import { fileURLToPath } from 'node:url'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -105,8 +106,10 @@ function loadBundle(reactImpl) {
     setTimeout: (_fn, delay) => { timers.push(delay); return timers.length },
     clearTimeout: () => {},
   }
-  // eslint-disable-next-line no-new-func -- evaluating the shipped browser artifact is the point.
-  new Function('window', SOURCE)(fakeWindow)
+  // The shipped browser artifact is evaluated as a script, against the same two
+  // globals the web boot supplies and none of this module's own scope.
+  globalThis.window = fakeWindow
+  vm.runInThisContext(SOURCE)
   assert.equal(captured.id, 'dsh-commandcode-quota', 'bundle registers under its package id')
   const exports = captured.factory((name) => {
     assert.equal(name, 'react', `bundle requires only react, saw ${name}`)
