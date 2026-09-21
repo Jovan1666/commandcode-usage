@@ -11,7 +11,7 @@
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CORE = path.join(ROOT, 'core', 'cc-usage.mjs');
@@ -120,37 +120,32 @@ record('statusline', () => {
 
 /* -------------------------------------------------------- 3. 隐藏逻辑 */
 
-record('gating', () => {
-  const tmp = fs.mkdtempSync(path.join(process.env.TEMP || '/tmp', 'ccq-check-'));
-  const write = (name, obj) => {
-    const p = path.join(tmp, name);
-    fs.writeFileSync(p, JSON.stringify(obj), 'utf8');
-    return p.replace(/\\/g, '/');
-  };
-  // 目录里有的模型（取自 /provider/v1/models 的已知条目）
-  const inside = write('in.jsonl', { role: 'assistant', message: { model: 'deepseek/deepseek-v4.1-flash' } });
-  // 目录里没有的
-  const outside = write('out.jsonl', { role: 'assistant', message: { model: 'totally-made-up-xyz' } });
+record('gating', async () => {
+  // 直接测判定函数，不跑整条流水线：整条要凭证、要联网，CI 上两样都没有。
+  // 之前就是那样写的，于是本地过、CI 挂。
+  const { decideRoute, normalizeModel } = await import(pathToFileURL(CORE).href);
+  const catalog = ['deepseek-v4.1-flash', 'claude-opus-5', 'kimi-k2.7-code'];
 
-  // 用 stdin 喂 transcript，才能走到逐轮判定
-  const withStdin = (transcript) => {
-    const r = spawnSync(process.execPath, [CORE, '--statusline', '--rows', '1'], {
-      encoding: 'utf8',
-      input: JSON.stringify({ session_id: 'check', transcript_path: transcript }),
-      env: { ...process.env, COLUMNS: '140' },
-      timeout: 30_000,
-    });
-    return String(r.stdout || '').replace(/\x1b\[[0-9;]*m/g, '').trim();
-  };
+  assert(normalizeModel('deepseek/deepseek-v4.1-flash') === 'deepseek-v4.1-flash', '归一化应去掉 vendor 前缀');
+  assert(normalizeModel('claude-opus-5[1M]') === 'claude-opus-5', '归一化应去掉 [1M] 这类后缀');
+  assert(normalizeModel('K2.7 Code') === 'k2.7-code', '归一化应把空白折成连字符');
 
-  const shown = withStdin(inside);
-  assert(shown.startsWith('CC '), `目录内的模型应显示额度，实际：${JSON.stringify(shown.slice(0, 40))}`);
+  assert(decideRoute('deepseek/deepseek-v4.1-flash', catalog) === 'yes', '目录里有的模型 -> 在用');
+  assert(decideRoute('totally-made-up-xyz', catalog) === 'no', '目录里没有 -> 不在用');
+  assert(decideRoute(null, catalog) === 'unknown', '拿不到模型名 -> 未知，交给下一级判据');
+  assert(decideRoute('deepseek-v4.1-flash', null) === 'unknown', '没有目录 -> 未知，不猜');
 
-  const hidden = withStdin(outside);
-  assert(hidden === '', `目录外的模型应完全隐藏，实际：${JSON.stringify(hidden.slice(0, 60))}`);
+  // 裸 claude-* 名字原生 Anthropic 也有，必须回避而不是当成命中
+  assert(decideRoute('claude-opus-5', catalog) === 'unknown', 'claude-* 有歧义 -> 不猜');
+  assert(decideRoute('claude-opus-5', catalog, { trustedSource: true }) === 'yes',
+    '来自本地路由映射的 claude-* 是确定的，应当显示');
 
-  fs.rmSync(tmp, { recursive: true, force: true });
-  return '目录内显示 / 目录外隐藏';
+  // 用户自己补的别名优先于目录
+  assert(decideRoute('kimi-k2.7-code', catalog, { modelPatterns: ['k2.7-code'] }) === 'yes', '用户别名应命中');
+  assert(decideRoute('deepseek-v4.1-flash', catalog, { modelPatterns: ['k2.7-code'] }) === 'no',
+    '给了别名就按别名来，不再看目录');
+
+  return '11 项判定断言';
 });
 
 /* ------------------------------------------------------- 4. 阈值与钩子 */
@@ -280,7 +275,7 @@ for (const { name, fn } of suites) {
   const started = Date.now();
   let summary = '';
   try {
-    summary = fn() ?? '';
+    summary = (await fn()) ?? '';
   } catch (err) {
     failures.push(`套件抛错：${err instanceof Error ? err.message : String(err)}`);
   }

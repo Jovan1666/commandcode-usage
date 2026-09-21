@@ -11,6 +11,8 @@ CC GOAT │ 5h █▎░░░░░░░░ 12% 4h27m后重置 │ 周 █▏�
 
 [简体中文](README.zh-CN.md) · [What was verified](docs/FINDINGS.md)
 
+[![Check](https://github.com/Jovan1666/commandcode-usage/actions/workflows/check.yml/badge.svg)](https://github.com/Jovan1666/commandcode-usage/actions/workflows/check.yml)
+
 ---
 
 ## Install
@@ -123,6 +125,19 @@ The script computes a burn-rate projection and exposes it in `--json`, but **doe
 it**. Extrapolating from a short sample says "you will run out" almost every time — 25 minutes
 into a 5-hour window a normal burst projects to 140 % — and a warning that is always on is
 not a warning.
+
+## Contributing
+
+```sh
+node scripts/check.mjs          # everything: sync, rendering, gating, secrets, dsh's 141 checks
+node scripts/check.mjs --quiet  # one line per suite
+```
+
+That is the same script CI runs, so a local pass means a green build. The dsh suite needs React
+first — see `plugins/dsh/README.md`.
+
+`core/cc-usage.mjs` is the only file you edit. The per-adapter copies are generated; after a
+change to the core run `node scripts/sync-core.mjs` (or let the check tell you).
 
 ## License
 

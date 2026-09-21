@@ -1607,7 +1607,7 @@ const CATALOG_TTL_MS = 24 * 3600_000;
 const catalogFile = () => path.join(CACHE_DIR, 'models.json');
 
 /** 统一大小写、去掉 vendor 前缀和 [1M] 这类上下文后缀，便于比对。 */
-function normalizeModel(name) {
+export function normalizeModel(name) {
   return String(name || '')
     .toLowerCase()
     .replace(/\[[^\]]*\]\s*$/, '')
@@ -1732,6 +1732,32 @@ function upstreamFromEnvAlias(localId) {
 }
 
 /**
+ * 纯判定：给一个真实模型名和一份模型目录，说这一轮在不在用 Command Code。
+ *
+ * 抽成纯函数是为了能脱离网络和凭证测试——routeDecision 的输入要靠取数才拿得到，
+ * 而 CI 上既没有凭证也不该联网。
+ */
+export function decideRoute(used, catalog, { modelPatterns = [], trustedSource = false } = {}) {
+  if (!used) return 'unknown';
+  const norm = normalizeModel(used);
+
+  // 用户显式给了别名就用用户的——自动匹配不可能覆盖所有命名习惯。
+  if (modelPatterns.length) {
+    return modelPatterns.some((p) => norm.includes(p)) ? 'yes' : 'no';
+  }
+
+  if (!Array.isArray(catalog) || !catalog.length) return 'unknown';
+  if (!catalog.includes(norm)) return 'no';
+  // 走本地路由时拿到的是路由配的真实上游，比 transcript 更可信，
+  // 所以不做下面那条规避——那不是名字，是路由配置。
+  if (trustedSource) return 'yes';
+  // claude-* 这类名字 Command Code 目录里有，但原生 Anthropic 也叫这个名，
+  // 光凭名字分不出路由到哪——不猜，退回下一级判据。
+  if (/^claude-/.test(norm)) return 'unknown';
+  return 'yes';
+}
+
+/**
  * 这一轮在不在用 Command Code。
  * 'yes' 确定在用 / 'no' 确定没用 / 'unknown' 拿不到证据（退回用量活跃度判断）。
  */
@@ -1744,21 +1770,14 @@ function routeDecision(stdinDoc, opts) {
   const source = via || (used ? 'transcript' : null);
   if (!used) return { decision: 'unknown', used: null, source: null };
 
-  const norm = normalizeModel(used);
-  // 用户显式给了别名就用用户的——自动匹配不可能覆盖所有命名习惯。
-  if (opts.modelPatterns.length) {
-    return { decision: opts.modelPatterns.some((p) => norm.includes(p)) ? 'yes' : 'no', used, source };
-  }
-
-  const catalog = readCatalog();
-  if (!catalog) return { decision: 'unknown', used, source };
-
-  // 走本地路由时，这里拿到的是路由配的真实上游，比 transcript 更可信，
-  // 所以不做 claude-* 那条"名字歧义就不猜"的规避——那不是名字，是路由配置。
-  if (!catalog.includes(norm)) return { decision: 'no', used, source };
-  if (source === '路由映射') return { decision: 'yes', used, source };
-  if (/^claude-/.test(norm)) return { decision: 'unknown', used, source };
-  return { decision: 'yes', used, source };
+  return {
+    decision: decideRoute(used, readCatalog(), {
+      modelPatterns: opts.modelPatterns,
+      trustedSource: source === '路由映射',
+    }),
+    used,
+    source,
+  };
 }
 
 

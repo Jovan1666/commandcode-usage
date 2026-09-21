@@ -11,6 +11,8 @@ CC GOAT │ 5h █▎░░░░░░░░ 12% 4h27m后重置 │ 周 █▏�
 
 [English](README.md) · [核实记录](docs/FINDINGS.md)
 
+[![Check](https://github.com/Jovan1666/commandcode-usage/actions/workflows/check.yml/badge.svg)](https://github.com/Jovan1666/commandcode-usage/actions/workflows/check.yml)
+
 ---
 
 ## 安装
@@ -120,6 +122,18 @@ plugins/<agent>/         ← 每个平台一个薄适配器
 脚本会算一个速度外推，并且**只在 `--json` 里给出，不显示**。
 短样本外推几乎每次都会说"你要超了"——5 小时窗口刚开 25 分钟时，一段正常的使用
 就能推出 140%——而一条永远亮着的警告等于没有警告。
+
+## 参与开发
+
+```sh
+node scripts/check.mjs          # 全部检查：同步、渲染、隐藏逻辑、密钥、dsh 的 141 项
+node scripts/check.mjs --quiet  # 每个套件只打一行
+```
+
+这就是 CI 跑的那份脚本，本地过了线上就是绿的。dsh 那套要先装 React，见 `plugins/dsh/README.md`。
+
+**只改 `core/cc-usage.mjs`。** 各适配器里的副本是生成的；改完 core 跑一次
+`node scripts/sync-core.mjs`（或者让检查告诉你忘了同步）。
 
 ## 许可
 
