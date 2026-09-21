@@ -139,7 +139,7 @@ deepseek-v4-pro | deepseek-v4-flash | deepseek-v4.1-flash
 | **pi** | ✅ | `setWidget` 的组件工厂重载 + `placement: "belowEditor"`（**已抓屏确认**） | ✅ 扩展 |
 | **Codex** | ❌ | `tui.status_line` 是**封闭枚举**（31 个内置项，无外部脚本口子） | ❌ |
 | | | 替代：`UserPromptSubmit` 钩子每轮弹一行（**已实测可触发**，见 §5.1） | ✅ 钩子 |
-| **DeepSeek Harness** | ✅ | 侧边栏插槽 | ✅ 插件 |
+| **DeepSeek Harness** | ✅ | 侧边栏插槽（**已抓屏确认**，位置在「设置」上方） | ✅ 插件 |
 | **ZCode** | ❌ | 无可插拔的常驻 UI 位 | ❌ |
 
 Codex 的替代路径：`UserPromptSubmit` hook 输出 `systemMessage`（每轮自动弹一行，零 token）。
@@ -218,6 +218,27 @@ hooks.UserPromptSubmit = [{ command = "node …" }]
 - **pi 的 widget 真的渲染出来了**（tmux 抓屏确认，位置在输入框与默认 footer 之间）
 - pi 的扩展 API 与官方类型逐条对上：入口 `ExtensionFactory`、
   `setWidget` 的组件工厂重载、`WidgetPlacement`、`session_start`/`agent_settled`/`session_shutdown`
+- **dsh 的卡片真的渲染出来了**（Playwright 抓屏确认，位置在侧栏「设置」上方），
+  数字与本仓库 core 完全一致
+
+**实测踩到的坑：dsh 插件的版本门槛很硬，而且症状具有误导性**
+
+本机原来装的是 **dsh `0.1.1-rc.2`**，而插件要求 `^0.1.5-rc.1`。启动时直接崩：
+
+```
+Error: failed to apply loader entry commandcode-quota:
+Cannot read properties of undefined (reading 'register')
+    at plugins/dsh/index.js:385
+```
+
+`ctx.connection.fetch` 在那个版本里根本不存在，于是 `.register` 读到了 undefined。
+
+两点值得记：
+
+1. **插件的 141 项离线校验全过，却掩盖了这个不兼容**——那些校验不需要 dsh 运行。
+   "测试全绿"和"集成能用"是两件事。
+2. **版本要求写在 README 的徽章和要求段里，很容易被忽略**。装之前先跑 `dsh --version`
+   对一下，比看报错快。升到 `0.1.5-rc.2` 后一切正常。
 
 **实测踩到的坑：pi 禁止跨会话持有 ctx**
 

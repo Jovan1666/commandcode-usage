@@ -27,7 +27,7 @@ All of them end up running the same core script (`core/cc-usage.mjs`).
 | **Grok Build** | `grok plugin marketplace add Jovan1666/commandcode-usage`, then run `plugins/grok/scripts/setup.mjs` | ✅ status line |
 | **opencode** | run `plugins/opencode/scripts/setup.mjs` | ✅ sidebar |
 | **pi** | `pi install ./commandcode-usage/plugins/pi`, or copy `index.ts` into `~/.pi/agent/extensions/` | ✅ above the input |
-| **DeepSeek Harness** | clone this repo, then `dsh plugin --profile web add ./commandcode-usage/plugins/dsh` | ✅ sidebar |
+| **DeepSeek Harness** | clone this repo, then `dsh plugin --profile web add ./commandcode-usage/plugins/dsh` (needs dsh `^0.1.5-rc.1`) | ✅ sidebar |
 | **ZCode** | `/plugin marketplace add Jovan1666/commandcode-usage` then install from it | ⚠️ command only |
 
 Nothing here asks for your API key up front. The script finds it — see [Credentials](#credentials).

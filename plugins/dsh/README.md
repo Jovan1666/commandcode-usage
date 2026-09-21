@@ -37,6 +37,25 @@ No browser tab, no login, no guessing how much of the plan is left.
 
 Everything is read from **your own account's data** — window count, caps and percentages come from the API, never assumed. Go, GOAT, Pro, Provider, Max and Teams all work; a plan that reports no rolling windows simply renders no rows.
 
+## 先确认 dsh 版本
+
+**本插件要求 dsh `^0.1.5-rc.1`。** 版本不够的话启动会直接崩：
+
+```
+Error: failed to apply loader entry commandcode-quota:
+Cannot read properties of undefined (reading 'register')
+```
+
+因为 `ctx.connection.fetch` 这个 seam 在旧版本里不存在。查一下再装：
+
+```sh
+dsh --version          # 需要 0.1.5-rc.1 或更高
+npm i -g @deepseek-ai/dsh@latest
+```
+
+注意：插件的 141 项离线校验**跑得过**也不需要这个版本——那些校验不启动 dsh。
+所以"校验全绿"不代表装上去能用。
+
 ## Install
 
 ```sh
