@@ -210,7 +210,7 @@ Windows 路径>` 把"工作目录是 POSIX 路径"这个变量排掉，再逐个
 | `node C:/…/cc-usage.mjs --statusline --rows 1` | ❌ os error 123 |
 | `D:/…/node.exe C:/…/cc-usage.mjs --statusline --rows 1` | ❌ os error 123 |
 
-三条结论，都是实测：
+四条结论，都是实测：
 
 1. **Grok 先拿整条 `command` 当一个路径试**，是存在的文件就直接执行。所以空格不是
    问题：`…/sp ace/cc-usage.cmd` 这种裸写照样跑起来。
