@@ -113,10 +113,12 @@ deepseek-v4-pro | deepseek-v4-flash | deepseek-v4.1-flash
 1. **本地路由的环境变量映射**（最硬）
    `model.id` 去反查 `ANTHROPIC_DEFAULT_*_MODEL`，取配对的 `*_MODEL_NAME` 得到真实上游。
    这不是推测，是路由自己的配置。
-2. **transcript 里最近一条真实消息的 `message.model`**
+2. **宿主直接给的模型名**（`model` 是字符串时）。Codex 的钩子就是这样，而且它给的
+   直接是真实模型名——这条对 Codex 是必需的，因为它的 `transcript_path` 是空的（见 §5.1）。
+3. **transcript 里最近一条真实消息的 `message.model`**
    （跳过 `isSidechain` 子代理和 `<synthetic>` 占位）
-3. **账号用量活跃度**（兜底，账号级——在别的机器/宿主上用它也会让数字增长，所以只是兜底）
-4. **`--model <子串>`** 用户手工补别名，覆盖以上全部
+4. **账号用量活跃度**（兜底，账号级——在别的机器/宿主上用它也会让数字增长，所以只是兜底）
+5. **`--model <子串>`** 用户手工补别名，覆盖以上全部
 
 真实模型名拿到后对照 §3 的目录：
 
@@ -136,11 +138,50 @@ deepseek-v4-pro | deepseek-v4-flash | deepseek-v4.1-flash
 | **opencode** | ✅ | 11 个官方 TUI 插槽（`sidebar_content` / `session_prompt_right` / …），SolidJS 组件 | ✅ 进程内插件 |
 | **pi** | ✅ | `setWidget({ placement: "belowEditor" })` | ✅ 扩展 |
 | **Codex** | ❌ | `tui.status_line` 是**封闭枚举**（31 个内置项，无外部脚本口子） | ❌ |
+| | | 替代：`UserPromptSubmit` 钩子每轮弹一行（**已实测可触发**，见 §5.1） | ✅ 钩子 |
 | **DeepSeek Harness** | ✅ | 侧边栏插槽 | ✅ 插件 |
 | **ZCode** | ❌ | 无可插拔的常驻 UI 位 | ❌ |
 
 Codex 的替代路径：`UserPromptSubmit` hook 输出 `systemMessage`（每轮自动弹一行，零 token）。
 ZCode 的替代路径：只能按需调用命令（**会走模型、烧 token**）。
+
+---
+
+### 5.1 Codex 钩子的实测细节（2026-09-21 验证）
+
+`codex exec` 端到端跑通，钩子确实触发了。四条只靠读文档得不出来的结论：
+
+**① 必须用完整的 MatcherGroup 嵌套形状。**
+
+```toml
+# ✅ 能触发
+hooks.UserPromptSubmit = [{ matcher = ".*", hooks = [{ type = "command", command = "node …" }] }]
+
+# ❌ 配置能加载、但不会触发
+hooks.UserPromptSubmit = [{ command = "node …" }]
+```
+
+扁平写法 serde 是接受的（`codex doctor` 也报配置正常），但不会被注册成真正的钩子组。
+**只看"配置能不能加载"会得出错误结论**——这一点值得单独记下来。
+
+**② 钩子需要信任。** 二进制里有 `HookStateToml { enabled, trusted_hash }`，
+并且存在 `--dangerously-bypass-hook-trust` 这个 flag——两者一起证实了信任是硬门槛。
+插件市场安装时 Codex 会提示授权；绕过只用于测试。
+
+**③ 钩子 stdin 的字段与 Claude Code 不同。**
+
+| 字段 | Codex 实测 | 影响 |
+|---|---|---|
+| `model` | `"gpt-5.6-terra"`（**字符串**） | 直接就是真实模型名，比 Claude Code 的本地别名干净 |
+| `transcript_path` | 存在但**为空** | 走不了"读会话记录"那条判据 |
+| `session_id` / `cwd` / `turn_id` / `permission_mode` / `prompt` | 都有 | — |
+
+所以判据里必须专门认「`model` 是字符串」这种形状，否则 Codex 会永远判成"未知"
+（本仓库的 `routeDecision` 就是这么修的）。
+
+**④ `codex exec` 会读 stdin。** 非交互调用时 stdin 不关会一直挂住
+（输出停在 `Reading additional input from stdin...`），表现为超时而不是报错。
+自动化里记得 `< /dev/null`。
 
 ---
 
@@ -154,7 +195,7 @@ ZCode 的替代路径：只能按需调用命令（**会走模型、烧 token**�
 | 官方开始提供**原生** provider（进了 models.dev） | §1 的接入方式变了，"路由信息在哪"随之变，`routeDecision` 要跟着调整 |
 | Claude Code 的 statusLine JSON 增加了 provider 字段 | 可去掉 §4 的第 2、3 条兜底，直接读字段 |
 | Claude Code 插件能自带 `statusLine` | 安装可以少一步（现在必须改用户 `settings.json`） |
-| Codex 的 `status_line` 开放外部命令 | Codex 也能做常驻，不必用 hook 兜底 |
+| Codex 的 `status_line` 开放外部命令 | Codex 也能做常驻，不必用 hook 兜底（现在只能每轮弹一行） |
 | 套餐档位/额度调整 | `PLANS` 表（`core/cc-usage.mjs` 顶部），来源是官方定价页 |
 | 计费周期字段变化 | `activityOf()` 里的请求数对比（跨周期归零已按"变了就算活跃"处理） |
 
@@ -169,6 +210,11 @@ ZCode 的替代路径：只能按需调用命令（**会走模型、烧 token**�
 - 环境变量映射成对出现（读 `~/.claude/settings.json`）
 - 各宿主常驻位的有无与机制（读宿主的二进制 / 文档 / 源码）
 - Windows 上 Node 启动耗时构成、Git Bash 29ms 地板（本机 25–30 次取中位数）
+
+**实测（续）**
+- Codex 的 `UserPromptSubmit` 钩子确实会触发；必须用嵌套的 MatcherGroup 形状，
+  扁平形状配置能加载但不生效（见 §5.1）
+- Codex 钩子的 stdin 给 `model` 字符串、`transcript_path` 为空
 
 **推断**（机制清楚，但没单独跑一轮验证）
 - statusLine 子进程能否继承 `ANTHROPIC_DEFAULT_*_MODEL_NAME`。

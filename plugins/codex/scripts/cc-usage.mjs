@@ -1720,13 +1720,13 @@ function lastUsedModel(transcriptPath) {
  * 拿 stdin 里的 model.id 去反查：哪个 *_MODEL 的值等于它，就取配对的 *_NAME。
  * 对不上说明这个会话没走本地路由（或用的就是真名），返回 null 由后面的判据接手。
  */
-function upstreamFromEnvAlias(localId) {
+function upstreamFromEnvAlias(localId, env = process.env) {
   if (!localId) return null;
   const want = normalizeModel(localId);
-  for (const [name, value] of Object.entries(process.env)) {
+  for (const [name, value] of Object.entries(env)) {
     if (!/^ANTHROPIC_DEFAULT_[A-Z0-9_]+_MODEL$/.test(name)) continue;
     if (normalizeModel(value) !== want) continue;
-    const real = process.env[`${name}_NAME`];
+    const real = env[`${name}_NAME`];
     if (real && real.trim()) return real.trim();
   }
   return null;
@@ -1762,23 +1762,31 @@ export function decideRoute(used, catalog, { modelPatterns = [], trustedSource =
  * 这一轮在不在用 Command Code。
  * 'yes' 确定在用 / 'no' 确定没用 / 'unknown' 拿不到证据（退回用量活跃度判断）。
  */
-function routeDecision(stdinDoc, opts) {
-  // 本地路由（cc-switch 之类）把映射写在环境变量里，换算一下就知道真实上游是谁。
-  // 这条最硬——它就是路由本身配的东西，不是推测。
-  const via = upstreamFromEnvAlias(stdinDoc?.model?.id) ? '路由映射' : null;
-  // 拿不到映射时退而求其次：transcript 里记着上游真实回报的模型名。
-  const used = (via ? upstreamFromEnvAlias(stdinDoc?.model?.id) : null) || lastUsedModel(stdinDoc?.transcript_path);
-  const source = via || (used ? 'transcript' : null);
-  if (!used) return { decision: 'unknown', used: null, source: null };
-
-  return {
-    decision: decideRoute(used, readCatalog(), {
-      modelPatterns: opts.modelPatterns,
-      trustedSource: source === '路由映射',
-    }),
+export function routeDecision(stdinDoc, opts = {}) {
+  // 目录可注入：CI 上没有缓存文件也没有网络，不注入就只能测到"未知"那条路。
+  const catalog = opts.catalog ?? readCatalog();
+  const ask = (used, trusted) => ({
+    decision: decideRoute(used, catalog, { modelPatterns: opts.modelPatterns, trustedSource: trusted }),
     used,
-    source,
-  };
+    source: trusted ? '路由映射' : '模型名',
+  });
+
+  // 1) 本地路由（cc-switch 之类）把映射写在环境变量里，换算一下就知道真实上游是谁。
+  //    这条最硬——它就是路由本身配的东西，不是推测。
+  const aliasUpstream = upstreamFromEnvAlias(stdinDoc?.model?.id, opts.env ?? process.env);
+  if (aliasUpstream) return ask(aliasUpstream, true);
+
+  // 2) 宿主直接给的模型名。
+  //    Codex 的钩子把 model 作为**字符串**放在 stdin 里（实测 "gpt-5.6-terra"），
+  //    而它的 transcript_path 是空的——所以这条对 Codex 是必需的，光靠 transcript 会永远判成未知。
+  //    Claude Code 那边 model 是对象，不会走到这里。
+  const direct = typeof stdinDoc?.model === 'string' && stdinDoc.model.trim() ? stdinDoc.model.trim() : null;
+  if (direct) return ask(direct, false);
+
+  // 3) 会话记录里这一轮真实用的模型。
+  const fromTranscript = lastUsedModel(stdinDoc?.transcript_path);
+  if (!fromTranscript) return { decision: 'unknown', used: null, source: null };
+  return ask(fromTranscript, false);
 }
 
 

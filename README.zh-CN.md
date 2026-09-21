@@ -23,7 +23,7 @@ CC GOAT │ 5h █▎░░░░░░░░ 12% 4h27m后重置 │ 周 █▏�
 | Agent | 怎么装 | 常驻？ |
 |---|---|---|
 | **Claude Code** | `/plugin marketplace add Jovan1666/commandcode-usage` 再 `/plugin install commandcode-usage`，然后跑 `plugins/claude-code/scripts/setup.mjs` | ✅ 状态栏 |
-| **Codex CLI** | 插件市场（`.agents/plugins/marketplace.json`），自带的钩子每轮触发 | ⚠️ 每轮一行 |
+| **Codex CLI** | 插件市场（`.agents/plugins/marketplace.json`），自带的钩子每轮触发；Codex 会先问你信不信任它 | ⚠️ 每轮一行 |
 | **Grok Build** | `grok plugin marketplace add Jovan1666/commandcode-usage`，然后跑 `plugins/grok/scripts/setup.mjs` | ✅ 状态栏 |
 | **opencode** | 跑 `plugins/opencode/scripts/setup.mjs` | ✅ 侧栏 |
 | **pi** | `pi install <本仓库>/plugins/pi`，或把 `index.ts` 拷进 `~/.pi/agent/extensions/` | ✅ 输入框上方 |

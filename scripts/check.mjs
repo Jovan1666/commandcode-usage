@@ -145,7 +145,30 @@ record('gating', async () => {
   assert(decideRoute('deepseek-v4.1-flash', catalog, { modelPatterns: ['k2.7-code'] }) === 'no',
     '给了别名就按别名来，不再看目录');
 
-  return '11 项判定断言';
+  // 两种宿主的 stdin 形状不同，routeDecision 必须都认。
+  // Codex 实测把 model 作为**字符串**给（"gpt-5.6-terra"），而且 transcript_path 是空的；
+  // Claude Code 则给对象 { id, display_name }，真实模型要去 transcript 里找。
+  const { routeDecision } = await import(pathToFileURL(CORE).href);
+  // 显式传空的 env：不然结果取决于跑测试那台机器有没有设 cc-switch 的模型映射，
+  // 那正是上一个版本「本地过 CI 挂」的原因。
+
+
+  const codex = routeDecision(
+    { model: 'gpt-5.6-terra', transcript_path: '' },
+    { catalog: [...catalog, 'gpt-5.6-terra'], env: {} });
+  assert(codex.decision === 'yes', 'Codex 的字符串 model 应当被认出来');
+
+  const codexOutside = routeDecision({ model: 'gpt-5.6-terra', transcript_path: '' }, { catalog, env: {} });
+  assert(codexOutside.decision === 'no', 'Codex 给的模型不在目录里就该隐藏');
+
+  const codexNoModel = routeDecision({ transcript_path: '' }, { catalog, env: {} });
+  assert(codexNoModel.decision === 'unknown', 'Codex 没给 model 时是未知，不是"不在用"');
+
+  const claudeObj = routeDecision({ model: { id: 'claude-opus-5[1M]' }, transcript_path: '' }, { catalog, env: {} });
+  assert(claudeObj.decision === 'unknown',
+    'Claude Code 的对象形状不该被当成模型名——真实模型在 transcript 里');
+
+  return '15 项判定断言';
 });
 
 /* ------------------------------------------------------- 4. 阈值与钩子 */
