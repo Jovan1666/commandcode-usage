@@ -4,10 +4,11 @@ argument-hint: "[--md | --compact | --json | --demo hot]"
 ---
 
 ```bash
-CC="${CLAUDE_PLUGIN_ROOT}/scripts/cc-usage.mjs"
+ROOT="${ZCODE_PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}"
+CC="$ROOT/scripts/cc-usage.mjs"
 if [ ! -f "$CC" ]; then
   for d in "$HOME/.zcode" "$HOME/.claude" "$HOME/.codex" "$HOME/.grok" "$HOME/.dsh"; do
-    CC=$(find "$d" -maxdepth 6 -type f -name cc-usage.mjs -path '*commandcode*' -print -quit 2>/dev/null)
+    CC=$(find "$d" -maxdepth 6 -type f -name cc-usage.mjs \( -path '*commandcode*' -o -path '*command-code*' \) -print -quit 2>/dev/null)
     [ -n "$CC" ] && break
   done
 fi
