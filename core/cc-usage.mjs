@@ -31,7 +31,7 @@ const require = createRequire(import.meta.url);
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { exec, spawn } = require('node:child_process');
+const { execFile, spawn } = require('node:child_process');
 
 const VERSION = '1.2.0';
 export const DEFAULT_API_BASE = 'https://api.commandcode.ai';
@@ -1378,14 +1378,15 @@ function goatDemo(scenario = 'normal') {
 }
 
 function openInBrowser(target) {
-  const isUrl = /^https?:\/\//i.test(target);
-  const cmd =
+  // 参数走 argv 数组，不拼 shell 命令串：target 是 URL/路径，插进命令串再交给
+  // shell 就要靠引号转义，而引号转义永远比"不经过 shell"更容易出错。
+  const [opener, args] =
     process.platform === 'win32'
-      ? `start "" ${isUrl ? `"${target}"` : `"" "${target}"`}`
+      ? ['cmd', ['/c', 'start', '', target]]
       : process.platform === 'darwin'
-        ? `open ${isUrl ? `"${target}"` : `"${target}"`}`
-        : `xdg-open "${target}"`;
-  exec(cmd, (err) => {
+        ? ['open', [target]]
+        : ['xdg-open', [target]];
+  execFile(opener, args, (err) => {
     if (err) console.error(`（自动打开失败，请手动打开：${target}）`);
   });
 }

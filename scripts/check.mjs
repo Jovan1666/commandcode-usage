@@ -17,6 +17,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CORE = path.join(ROOT, 'core', 'cc-usage.mjs');
 const QUIET = process.argv.includes('--quiet');
 
+// dsh 那半边是别人的既成代码，静态检查整体跳过它（它自己的套件覆盖）。
+const DSH_SEGMENT = `${path.sep}dsh${path.sep}`;
+
 const suites = [];
 const record = (name, fn) => suites.push({ name, fn });
 
@@ -276,7 +279,7 @@ record('static', () => {
   // 语法检查跳过 dsh 的旧文件（它们是别人的既成代码，由它自己的套件覆盖）
   for (const f of files) {
     if (!/\.(mjs|cjs|js)$/.test(f)) continue;
-    if (f.includes(`${path.sep}dsh${path.sep}`)) continue;
+    if (f.includes(DSH_SEGMENT)) continue;
     const r = spawnSync(process.execPath, ['--check', f], { encoding: 'utf8', timeout: 20_000 });
     assert(r.status === 0, `语法错误: ${path.relative(ROOT, f)}`);
     js += 1;
