@@ -14,6 +14,10 @@
  *   node setup.mjs --refresh 0     关掉定时刷新，只在事件触发时更新
  *   node setup.mjs --print         只打印将要写入的配置，不改任何文件
  *   node setup.mjs --remove        移除（合并模式下只摘掉额度那几行）
+ *
+ * 装的时候会把 cc-usage.mjs 复制一份到 config 目录（默认 ~/.claude/commandcode-usage.mjs），
+ * 状态栏命令指向那份副本：插件缓存目录名里带版本号，升级就会换，命令里写死它等于埋一颗
+ * 「某天这行安静消失」的雷。插件升级后重跑本脚本即可把副本刷新到新版本。
  */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -51,11 +55,33 @@ function fail(message) {
   process.exit(1);
 }
 
-/** 绝对路径：状态栏脚本的 cwd 不是插件目录，相对路径会找不到自己。 */
-const OUR_COMMAND = `node "${SCRIPT}" --statusline --rows ${rows}`;
+// 状态栏命令里不能出现版本号。插件升级会换掉缓存目录里的版本号目录（1.0.0 → 1.0.1），
+// 命令里写死旧路径的结果不是报错，而是这一行安静地消失——所以装的时候把脚本复制到
+// 一个不含版本的固定路径，命令指向副本。副本不会自己变新，升级后重跑本脚本即可。
+const STABLE = path.join(CONFIG_DIR, 'commandcode-usage.mjs');
 
-// MERGED 里会内联这两个脚本路径；含单引号的路径在 JSON 字符串里会坏掉，直接拒绝。
-for (const p of [SCRIPT, MERGED]) {
+/** 绝对路径：状态栏脚本的 cwd 不是插件目录，相对路径会找不到自己。 */
+let ourCommand = `node "${STABLE}" --statusline --rows ${rows}`;
+// 合并脚本兜底用的也是副本路径；复制失败时会被改成插件目录里的原路径。
+let quotaScriptPath = STABLE;
+
+/**
+ * 复制出固定路径的副本。复制失败就退回插件目录里的原路径——照样能跑，
+ * 只是升级后要重跑本脚本，总比装不上强。
+ */
+function installStable() {
+  try {
+    fs.copyFileSync(SCRIPT, STABLE);
+    return true;
+  } catch {
+    ourCommand = `node "${SCRIPT}" --statusline --rows ${rows}`;
+    quotaScriptPath = SCRIPT;
+    return false;
+  }
+}
+
+// 这三个路径会被内联进生成的脚本；含单引号的路径在字符串里会坏掉，直接拒绝。
+for (const p of [SCRIPT, MERGED, STABLE]) {
   if (p.includes("'")) fail(`路径里有单引号，无法安全生成合并脚本：${p}`);
 }
 
@@ -76,7 +102,9 @@ if (!fs.existsSync(SCRIPT)) {
 
 const existing = settings.statusLine;
 const existingCommand = typeof existing?.command === 'string' ? existing.command : null;
-const isOurs = existingCommand?.includes('cc-usage.mjs') ?? false;
+// 副本叫 commandcode-usage.mjs，不再是 cc-usage.mjs 的子串，两种名字都要认——
+// 认不出来的话重跑 setup 会把副本当成"别人的状态栏"，要么拒绝安装，要么套一层合并。
+const isOurs = ['cc-usage.mjs', path.basename(STABLE)].some((n) => existingCommand?.includes(n)) ?? false;
 const isMerged = existingCommand?.includes(path.basename(MERGED)) ?? false;
 
 /**
@@ -115,29 +143,76 @@ const mergedSource = (otherCommand) => `#!/usr/bin/env node
 // 并行只要一次多一点（约 130ms）。宿主每轮都会调用状态栏，这个差别值得。
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 let input = '';
 try { input = fs.readFileSync(0, 'utf8'); } catch {}
 
-const run = (cmd) => new Promise((resolve) => {
+// 每次运行都重新找一份额度脚本，而不是用安装那一刻的路径：插件升级会换掉缓存目录里的
+// 版本号目录，写死的结果不是报错，而是这一行安静地消失。装的时候复制的那份固定路径
+// 副本留作兜底，插件被卸掉也还能用。
+const CACHE = path.join(os.homedir(), '.claude', 'plugins', 'cache', 'commandcode-usage', 'commandcode-usage');
+const FALLBACK = ${JSON.stringify(quotaScriptPath)};
+function resolveQuotaScript() {
+  try {
+    const newestFirst = fs
+      .readdirSync(CACHE, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => {
+        const dir = path.join(CACHE, entry.name);
+        return { dir, at: fs.statSync(dir).mtimeMs };
+      })
+      .sort((a, b) => b.at - a.at);
+    for (const { dir } of newestFirst) {
+      const candidate = path.join(dir, 'scripts', 'cc-usage.mjs');
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  } catch {}
+  return FALLBACK;
+}
+
+const QUOTA_SCRIPT = resolveQuotaScript();
+const QUOTA_COMMAND = QUOTA_SCRIPT && fs.existsSync(QUOTA_SCRIPT) ? 'node "' + QUOTA_SCRIPT + '" --statusline --rows ${rows}' : null;
+
+const LOG = path.join(os.homedir(), '.claude', 'commandcode-statusline.log');
+const LF = String.fromCharCode(10);
+// 状态栏是渲染区，不是报错区：失败一个字节都不往 stdout/stderr 去，只写日志文件。
+// 但也不能什么都不留——「这一行怎么不见了」得有地方可查。
+function noteFailure(what, code, stderr) {
+  try {
+    const first = String(stderr || '').split(LF).find((line) => line.trim()) || '';
+    const text = new Date().toISOString() + ' ' + what + ' 退出码 ' + code + (first ? ' ' + first.slice(0, 200) : '') + LF;
+    if (fs.existsSync(LOG) && fs.statSync(LOG).size > 65536) fs.writeFileSync(LOG, text);
+    else fs.appendFileSync(LOG, text);
+  } catch {}
+}
+
+const run = (what, cmd) => new Promise((resolve) => {
   // shell:true 是为了让 "node /path/x.mjs" 这种整条命令原样跑起来，
   // 也让 Windows 上的 .cmd/.bat 包装脚本能被解析到。
-  const child = spawn(cmd, { shell: true, stdio: ['pipe', 'pipe', 'ignore'] });
+  const child = spawn(cmd, { shell: true, stdio: ['pipe', 'pipe', 'pipe'] });
   let out = '';
+  let err = '';
   child.stdout.on('data', (chunk) => { out += chunk; });
-  child.on('error', () => resolve(''));
-  child.on('close', () => resolve(out.trimEnd()));
+  child.stderr.on('data', (chunk) => { err += chunk; });
+  child.on('error', (error) => { noteFailure(what, 'spawn', error.message); resolve(''); });
+  child.on('close', (code) => {
+    const text = out.trimEnd();
+    if (!text) noteFailure(what, code, err);
+    resolve(text);
+  });
   child.stdin.end(input);
 });
 
+const quota = QUOTA_COMMAND ? run('额度', QUOTA_COMMAND) : Promise.resolve('');
+const own = run('原状态栏', ${JSON.stringify(otherCommand)});
+
 // Promise.all 保序，所以下面数组的顺序就是最终显示顺序。
 const blocks = (await Promise.all([
-  ${oursFirst ? `run(${JSON.stringify(OUR_COMMAND)}),
-  run(${JSON.stringify(otherCommand)}),` : `run(${JSON.stringify(otherCommand)}),
-  run(${JSON.stringify(OUR_COMMAND)}),`}
+  ${oursFirst ? "quota,\n  own," : "own,\n  quota,"}
 ])).filter(Boolean);
 
-const LF = String.fromCharCode(10);
 process.stdout.write(blocks.join(LF) + LF);
 `;
 
@@ -152,6 +227,7 @@ if (remove) {
     const original = mergedWith();
     if (fs.existsSync(MERGED)) fs.rmSync(MERGED);
     if (fs.existsSync(SIDECAR)) fs.rmSync(SIDECAR);
+    if (fs.existsSync(STABLE)) fs.rmSync(STABLE);
     // 把用户原来那个状态栏放回去，而不是留下一片空白。
     // 删掉别人的配置是最不可原谅的一类 bug，哪怕我们备份过。
     if (original) {
@@ -168,6 +244,7 @@ if (remove) {
   } else if (isOurs) {
     delete settings.statusLine;
     writeSettings(settings);
+    if (fs.existsSync(STABLE)) fs.rmSync(STABLE);
     console.log(`已移除。重启 Claude Code 后状态栏不再出现。\n  ${SETTINGS}`);
   } else {
     console.log(existing ? '当前状态栏不是本插件装的，没有动它。' : '本来就没有配状态栏。');
@@ -177,14 +254,21 @@ if (remove) {
 
 /* ------------------------------------------------------------------ 预览 */
 
+// 合并决策要在预览之前算出来。以前这里只看 `merge && 别人的状态栏`，于是
+// 「已经合并过、再跑一次 --print」会预告一个真跑时不会写下去的命令。
+const mergeWithSelf = isOurs && !isMerged;
+const useMerge = (merge || isMerged) && !force && !mergeWithSelf;
+
 if (printOnly) {
-  const script = merge && existingCommand && !isOurs && !isMerged ? mergedSource(existingCommand) : null;
+  const other = useMerge ? mergedWith() : null;
+  if (useMerge && !other) fail('要合并但读不到现有的状态栏命令。先确认 settings.json 里的 statusLine，或用 --force。');
+  const script = other ? mergedSource(other) : null;
   console.log(
     JSON.stringify(
       {
         statusLine: {
           type: 'command',
-          command: script ? `node "${MERGED}"` : OUR_COMMAND,
+          command: script ? `node "${MERGED}"` : ourCommand,
           ...(refresh > 0 ? { refreshInterval: refresh } : {}),
         },
         ...(script ? { __mergedScript: script } : {}),
@@ -216,7 +300,7 @@ if (existingCommand && !isOurs && !isMerged && !force && !merge) {
 
 /* ------------------------------------------------------------------ 写入 */
 
-const useMerge = (merge || isMerged) && !force;
+// （合并决策 mergeWithSelf / useMerge 在预览那一段就定了，这里不再重复。）
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
 let backup = null;
 const backupOnce = () => {
@@ -226,6 +310,10 @@ const backupOnce = () => {
   }
 };
 
+if (mergeWithSelf && merge && !force) {
+  console.log('当前已经是本插件的状态栏，没有可合并的对象，按普通安装处理。');
+}
+
 if (useMerge) {
   // 合并模式下要跟的是「别人那个脚本」，不是我们自己的合并脚本（否则会自己套自己）。
   const other = mergedWith();
@@ -233,6 +321,7 @@ if (useMerge) {
     fail('要合并但读不到现有的状态栏命令。先确认 settings.json 里的 statusLine，或用 --force。');
   }
   backupOnce();
+  installStable();
   fs.writeFileSync(MERGED, mergedSource(other), 'utf8');
   fs.writeFileSync(SIDECAR, `${JSON.stringify({ mergedWith: other }, null, 2)}
 `, 'utf8');
@@ -257,9 +346,10 @@ if (useMerge) {
   );
 } else {
   backupOnce();
+  installStable();
   settings.statusLine = {
     type: 'command',
-    command: OUR_COMMAND,
+    command: ourCommand,
     ...(refresh > 0 ? { refreshInterval: refresh } : {}),
   };
   writeSettings(settings);
@@ -267,7 +357,7 @@ if (useMerge) {
   console.log(
     [
       isOurs ? '状态栏已更新。' : '状态栏已装好。',
-      `  命令    ${OUR_COMMAND}${refresh > 0 ? `  （每 ${refresh}s 顺带刷一次）` : ''}`,
+      `  命令    ${ourCommand}${refresh > 0 ? `  （每 ${refresh}s 顺带刷一次）` : ''}`,
       `  写入    ${SETTINGS}`,
       backup ? `  备份    ${backup}` : null,
       '',

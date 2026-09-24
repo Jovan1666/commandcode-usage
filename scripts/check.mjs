@@ -10,6 +10,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -332,6 +333,99 @@ record('dsh', () => {
   const tail = out.trim().split('\n').slice(-3).join(' | ');
   assert(r.status === 0, `dsh 套件失败：${tail}`);
   return tail || '通过';
+});
+
+/* ------------------------------------------- 3. Claude Code 组装脚本 */
+
+record('installer', () => {
+  let checked = 0;
+  // setup.mjs 生成的合并脚本是唯一会碰到用户自己配置的东西，所以它必须做到三件事：
+  //   1) 额度脚本按运行期解析——插件升级会换掉缓存目录里的版本号目录，写死就静默消失；
+  //   2) 子进程失败时 stdout 一个字节都不多，用户原来那行照常显示；
+  //   3) 失败原因落进日志文件，否则「这行怎么不见了」无处可查。
+  const SETUP = path.join(ROOT, 'plugins', 'claude-code', 'scripts', 'setup.mjs');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-setup-'));
+  const cfg = path.join(root, 'cfg');
+  const home = path.join(root, 'home');
+  const mergedFile = path.join(cfg, 'commandcode-statusline.mjs');
+  const logFile = path.join(home, '.claude', 'commandcode-statusline.log');
+  const cache = (...parts) => path.join(home, '.claude', 'plugins', 'cache', 'commandcode-usage', 'commandcode-usage', ...parts);
+  const quotaStub = cache('9.9.9', 'scripts', 'cc-usage.mjs');
+  const stub = (text) => `process.stdout.write(${JSON.stringify(text)} + String.fromCharCode(10));\n`;
+  const put = (file, body) => {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, body);
+  };
+  // 清掉可能存在的真实凭证，让这几项判定不依赖跑测试的人配了什么。
+  const env = {
+    ...process.env,
+    HOME: home,
+    USERPROFILE: home,
+    COMMAND_CODE_API_KEY: '',
+    COMMANDCODE_API_KEY: '',
+    CMD_API_KEY: '',
+    COMMAND_CODE_API_BASE: '',
+  };
+  const runMerged = () => {
+    const r = spawnSync(process.execPath, [mergedFile], { encoding: 'utf8', input: '{}', timeout: 20_000, env });
+    return String(r.stdout || '').trim().split('\n').filter(Boolean);
+  };
+
+  try {
+    fs.mkdirSync(cfg, { recursive: true });
+    put(path.join(cfg, 'user-statusline.mjs'), stub('用户自己那行'));
+    fs.writeFileSync(
+      path.join(cfg, 'settings.json'),
+      JSON.stringify({ statusLine: { type: 'command', command: `node ${path.join(cfg, 'user-statusline.mjs')}` } }, null, 2),
+    );
+    const installed = spawnSync(process.execPath, [SETUP, '--merge', '--rows', '1'], {
+      encoding: 'utf8',
+      timeout: 20_000,
+      env: { ...env, CLAUDE_CONFIG_DIR: cfg },
+    });
+    assert(installed.status === 0, `--merge 应以 0 退出，实际 ${installed.status}: ${installed.stderr}`);
+    checked += 1;
+
+    // --print 是给人看「到底会写什么」的，所以它必须和真正写下去的一致：
+    // 已合并过的状态再预览一次，也该说要写合并脚本，而不是换成额度命令。
+    const preview = spawnSync(process.execPath, [SETUP, '--print', '--merge', '--rows', '1'], {
+      encoding: 'utf8',
+      timeout: 20_000,
+      env: { ...env, CLAUDE_CONFIG_DIR: cfg },
+    });
+    assert(preview.status === 0, `--print 应以 0 退出，实际 ${preview.status}: ${preview.stderr}`);
+    const printed = JSON.parse(preview.stdout);
+    assert(printed.statusLine.command.includes('commandcode-statusline.mjs'),
+      `已合并状态下 --print 应预告合并脚本，实际 ${printed.statusLine.command}`);
+    assert(typeof printed.__mergedScript === 'string' && printed.__mergedScript.includes('resolveQuotaScript'),
+      '--print 应给出将要写入的合并脚本');
+    checked += 1;
+
+    // 1) 升级场景：安装时写死的那份脚本已经不在，缓存里只剩新版本目录
+    put(quotaStub, stub('额度：新版本'));
+    let lines = runMerged();
+    assert(lines.length === 2, `升级后仍应是两行，实际 ${JSON.stringify(lines)}`);
+    assert(lines[1] === '额度：新版本', `升级后应解析到新版本目录，实际 ${JSON.stringify(lines[1])}`);
+    checked += 1;
+
+    // 2) 额度脚本失败：用户那行照常显示，原因写进日志
+    put(quotaStub, 'process.stderr.write("模拟 401");\nprocess.exit(1);\n');
+    lines = runMerged();
+    assert(lines.length === 1 && lines[0] === '用户自己那行', `失败时应只留用户那行，实际 ${JSON.stringify(lines)}`);
+    assert(fs.existsSync(logFile) && fs.readFileSync(logFile, 'utf8').includes('退出码 1'), '失败原因应写进日志文件');
+    checked += 1;
+
+    // 3) 插件整个消失：退回安装时复制的那份固定路径副本
+    fs.rmSync(path.join(home, '.claude', 'plugins'), { recursive: true, force: true });
+    put(path.join(cfg, 'commandcode-usage.mjs'), stub('额度：固定路径副本'));
+    lines = runMerged();
+    assert(lines.length === 2 && lines[1] === '额度：固定路径副本', `插件消失后应退回副本，实际 ${JSON.stringify(lines)}`);
+    checked += 1;
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+
+  return `${checked} 项组装断言`;
 });
 
 /* ------------------------------------------------------------ 执行 */

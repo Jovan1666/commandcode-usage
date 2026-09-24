@@ -9,6 +9,10 @@
   The old default equalled the refresh interval most hosts use, so every tick started a background
   process and made four API calls — for a number that cannot visibly move in three minutes. Pass
   `--cache-ttl 60` to restore the old cadence.
+- **The Claude Code status-line command no longer contains a version number.** It points at a copy
+  of the script kept in the config directory, and the merged wrapper resolves the plugin's own copy
+  at run time. A plugin upgrade used to leave a dead path behind, and the quota line disappeared
+  without a word. Failures now land in `~/.claude/commandcode-statusline.log` instead of nowhere.
 
 ## 1.0.0 — 2026-09-21
 
