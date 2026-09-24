@@ -8,6 +8,10 @@
   numbers first and only falls back to mtime for directories that are not versions (a commit hash,
   say). Reproduced against the real cache and covered by the `installer` suite.
 
+  Note for anyone already on 1.0.1: the wrapper script lives in your config directory and is written
+  by `setup.mjs`, not by the plugin — so after updating, run `setup.mjs --merge --rows 1` once to
+  regenerate it. (The plugin update itself only replaces the files inside the plugin cache.)
+
 ## 1.0.1 — 2026-09-24
 
 - **The monthly amount on the status line is labelled.** `月 ██▏ 18% 剩$57.60` — the bar is what
