@@ -156,15 +156,29 @@ const CACHE = path.join(os.homedir(), '.claude', 'plugins', 'cache', 'commandcod
 const FALLBACK = ${JSON.stringify(quotaScriptPath)};
 function resolveQuotaScript() {
   try {
-    const newestFirst = fs
+    const ranked = fs
       .readdirSync(CACHE, { withFileTypes: true })
       .filter((entry) => entry.isDirectory())
       .map((entry) => {
         const dir = path.join(CACHE, entry.name);
-        return { dir, at: fs.statSync(dir).mtimeMs };
-      })
-      .sort((a, b) => b.at - a.at);
-    for (const { dir } of newestFirst) {
+        const parts = String(entry.name).split('.').map(Number);
+        const isVersion = parts.length >= 2 && parts.every((n) => Number.isInteger(n) && n >= 0);
+        return { dir, version: isVersion ? parts : null, at: fs.statSync(dir).mtimeMs };
+      });
+    // 版本号大的优先，不是按目录时间。插件管理器复制文件时会保留时间戳，于是新版本的目录
+    // 可能反而比旧的"更旧"——实测升级到 1.0.1 之后，1.0.0 的目录时间更晚，按时间排会挑回旧版本。
+    ranked.sort((a, b) => {
+      if (a.version && b.version) {
+        for (let i = 0; i < 3; i += 1) {
+          const diff = (b.version[i] || 0) - (a.version[i] || 0);
+          if (diff) return diff;
+        }
+      } else if (Boolean(a.version) !== Boolean(b.version)) {
+        return a.version ? -1 : 1; // 认得出版本号的排在前面
+      }
+      return b.at - a.at; // 都不是版本号（提交哈希目录之类）时才看时间
+    });
+    for (const { dir } of ranked) {
       const candidate = path.join(dir, 'scripts', 'cc-usage.mjs');
       if (fs.existsSync(candidate)) return candidate;
     }

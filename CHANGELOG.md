@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.2 — 2026-09-24
+
+- **Fixed the upgrade path that 1.0.1 introduced an hour earlier.** It picked the plugin's copy by
+  directory mtime, and since copying preserves timestamps, the *old* version directory looked
+  newer: right after upgrading to 1.0.1 the wrapper resolved 1.0.0 again. It now compares version
+  numbers first and only falls back to mtime for directories that are not versions (a commit hash,
+  say). Reproduced against the real cache and covered by the `installer` suite.
+
 ## 1.0.1 — 2026-09-24
 
 - **The monthly amount on the status line is labelled.** `月 ██▏ 18% 剩$57.60` — the bar is what

@@ -350,7 +350,7 @@ record('installer', () => {
   const mergedFile = path.join(cfg, 'commandcode-statusline.mjs');
   const logFile = path.join(home, '.claude', 'commandcode-statusline.log');
   const cache = (...parts) => path.join(home, '.claude', 'plugins', 'cache', 'commandcode-usage', 'commandcode-usage', ...parts);
-  const quotaStub = cache('9.9.9', 'scripts', 'cc-usage.mjs');
+  const quotaStub = cache('1.0.1', 'scripts', 'cc-usage.mjs');
   const stub = (text) => `process.stdout.write(${JSON.stringify(text)} + String.fromCharCode(10));\n`;
   const put = (file, body) => {
     fs.mkdirSync(path.dirname(file), { recursive: true });
@@ -401,11 +401,18 @@ record('installer', () => {
       '--print 应给出将要写入的合并脚本');
     checked += 1;
 
-    // 1) 升级场景：安装时写死的那份脚本已经不在，缓存里只剩新版本目录
+    // 1) 升级场景：安装时写死的那份脚本已经不在，缓存里只剩新版本目录。
+    //    同时复现线上那个坑：插件管理器复制文件会保留时间戳，于是旧版本的目录反而更晚，
+    //    按目录时间挑会挑回旧版本——实测升级到 1.0.1 时就是这么挑错的。
     put(quotaStub, stub('额度：新版本'));
+    const olderDir = path.dirname(path.dirname(cache('1.0.0', 'scripts', 'cc-usage.mjs')));
+    put(cache('1.0.0', 'scripts', 'cc-usage.mjs'), stub('额度：旧版本'));
+    const nowSec = Date.now() / 1000;
+    fs.utimesSync(olderDir, nowSec, nowSec);
+    fs.utimesSync(path.dirname(path.dirname(quotaStub)), nowSec - 3600, nowSec - 3600);
     let lines = runMerged();
     assert(lines.length === 2, `升级后仍应是两行，实际 ${JSON.stringify(lines)}`);
-    assert(lines[1] === '额度：新版本', `升级后应解析到新版本目录，实际 ${JSON.stringify(lines[1])}`);
+    assert(lines[1] === '额度：新版本', `应按版本号挑新的那份，实际 ${JSON.stringify(lines[1])}`);
     checked += 1;
 
     // 2) 额度脚本失败：用户那行照常显示，原因写进日志
