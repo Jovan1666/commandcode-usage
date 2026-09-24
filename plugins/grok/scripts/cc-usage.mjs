@@ -87,7 +87,10 @@ function parseArgs(argv) {
     // 状态栏模式：给 Claude Code / Grok 这类「每轮自动跑一次脚本」的宿主用。
     // 默认走磁盘缓存，命中就直接出图，不会每条消息都去打四个接口。
     threshold: null,
-    cacheTtl: 60000,
+    // 超过这个年龄就先显示旧快照，同时后台补一次数。
+    // 别再调回 60s：它正好等于宿主常见的刷新周期，于是每一跳都起一个后台进程打四个
+    // 接口；而额度这种量级，3 分钟内的差异本来也看不出来。
+    cacheTtl: 180_000,
     // 超过这么久没有新的请求量增长，就当用户已经切走了，状态栏不再显示。
     // 0 = 永远显示（不推荐，见 README）。
     idleHideMs: 30 * 60_000,
@@ -1906,7 +1909,8 @@ function renderStatusline(view, opts = {}) {
         const inner = [];
         if (barW > 0) inner.push(statusBar(real, c, lvl, barW));
         inner.push(sevColor(c, lvl, `${Math.round(real)}%`));
-        if (showMoney && w === monthAsWindow && m) inner.push(c.gray(money(m.remaining)));
+        // 这条 bar 说的是「已用多少」，金额是「还剩多少」——两个方向，不加标签就会被读成一回事。
+        if (showMoney && w === monthAsWindow && m) inner.push(c.gray(`剩${money(m.remaining)}`));
         if (resetsFor === 'all' || label === tightLabel) {
           const r = resetText(w);
           if (r) inner.push(c.gray(r));
@@ -1956,7 +1960,8 @@ function renderStatusline(view, opts = {}) {
   }
   pushRow('5h', w5, null, resetText(w5));
   pushRow('周', wk, null, resetText(wk));
-  pushRow('月', monthAsWindow, m ? money(m.remaining) : null, resetText(monthAsWindow));
+  // 三行模式同理：bar 是「用了多少」，金额是「还剩多少」，标签放在决定数值的地方。
+  pushRow('月', monthAsWindow, m ? `剩${money(m.remaining)}` : null, resetText(monthAsWindow));
 
   if (!rows.length) return '';
 
@@ -1970,10 +1975,11 @@ function renderStatusline(view, opts = {}) {
     return `${lead}${c.gray(padEndW(label, labelW))} ${body}`;
   });
 
-  // 快照年龄只在「明显过期」时才标：宿主的刷新周期通常是 60s，几十秒的陈旧
-  // 对额度这种量级没有意义，每帧都挂个 ⟳12s 只会变成噪音。超过 3 分钟才说明
-  // 后台刷新一直没成功，那时候这个标记才有信息量。
-  if (opts.stale && typeof opts.ageMs === 'number' && opts.ageMs > 180_000) {
+  // 快照年龄只在「明显过期」时才标：几十秒的陈旧对额度这种量级没有意义，
+  // 每帧都挂个 ⟳12s 只会变成噪音。阈值取 max(cacheTtl, 3 分钟)：TTL 调大时标记
+  // 跟着一起走，TTL 调小时也不会退化成每帧都挂。
+  const staleMarkMs = Math.max(Number(opts.cacheTtl) || 0, 180_000);
+  if (opts.stale && typeof opts.ageMs === 'number' && opts.ageMs > staleMarkMs) {
     lines[lines.length - 1] += c.gray(` ⟳${Math.round(opts.ageMs / 1000)}s`);
   }
   return lines.join('\n');

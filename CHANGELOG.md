@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- **The monthly amount on the status line is labelled.** `月 ██▏ 18% 剩$57.60` — the bar is what
+  has been used and the figure is what is left, so the figure needed a word in front of it.
+  Same in the three-row layout.
+- **Quota snapshots refresh every three minutes instead of every minute** (`cacheTtl` 60s → 180s).
+  The old default equalled the refresh interval most hosts use, so every tick started a background
+  process and made four API calls — for a number that cannot visibly move in three minutes. Pass
+  `--cache-ttl 60` to restore the old cadence.
+
 ## 1.0.0 — 2026-09-21
 
 First release of the monorepo. Seven adapters, one core.
