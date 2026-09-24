@@ -1,6 +1,6 @@
 {
   "name": "commandcode-usage-claude-code",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Show your Command Code plan usage in the Claude Code status line: 5-hour, weekly and monthly windows with reset times. Runs locally — costs no tokens.",
   "author": {
     "name": "Jovan1666",

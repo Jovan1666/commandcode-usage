@@ -1,6 +1,6 @@
 {
   "name": "pi-commandcode-usage",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Command Code plan usage line for the pi coding agent: 5-hour, weekly and monthly windows above the input box.",
   "type": "module",
   "main": "index.ts",

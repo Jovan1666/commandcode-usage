@@ -1,6 +1,6 @@
 {
   "name": "commandcode-usage",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Show your Command Code plan usage inside Codex: a per-turn quota line, plus a /quota command for the full panel.",
   "keywords": [
     "command-code",

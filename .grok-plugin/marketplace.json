@@ -10,7 +10,7 @@
       "name": "commandcode-usage",
       "description": "Command Code plan usage in the status line: 5-hour, weekly and monthly windows with reset times. Runs locally, costs no tokens.",
       "category": "utilities",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "homepage": "https://github.com/Jovan1666/commandcode-usage",
       "keywords": ["quota", "usage", "status-line", "command-code"],
       "source": {

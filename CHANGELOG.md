@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 — 2026-09-24
 
 - **The monthly amount on the status line is labelled.** `月 ██▏ 18% 剩$57.60` — the bar is what
   has been used and the figure is what is left, so the figure needed a word in front of it.
