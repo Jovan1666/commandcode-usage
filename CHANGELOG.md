@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+- **The DSH desktop app could never show the card, and said nothing about it.** The plugin discovered
+  your Command Code provider route by reading `$DSH_HOME/settings.yaml` only. The Electron app
+  migrates that file to `settings.yaml.imported` on first launch and keeps user settings in the patch
+  layers from then on (`$DSH_HOME/cordis.patch.yml`, `$DSH_HOME/profiles/<name>/cordis.patch.yml`),
+  so on every desktop install the host answered `configured: false` — by design a card that renders
+  nothing and reports no error. Route discovery now also scans both patch layers; the indent scan
+  already handled the shape, so this is one candidate list, not a second parser. Covered by
+  `quota` («a desktop (Electron) host keeps its config in a patch layer»).
+
+- **A host without Command Code was asked exactly once, ever.** After `configured: false` the card
+  went invisible and never polled again, so a provider added *after* the card mounted — the desktop
+  migration above, a settings edit, a profile switch — stayed invisible for the rest of the session.
+  The card now re-checks every 5 minutes while absent (`ABSENT_MS`); it still renders nothing, and a
+  host that genuinely does not use Command Code pays one local round trip per 5 minutes. Covered by
+  `client` («a host without Command Code looks again, slowly»).
+
 ## 1.0.2 — 2026-09-24
 
 - **Fixed the upgrade path that 1.0.1 introduced an hour earlier.** It picked the plugin's copy by

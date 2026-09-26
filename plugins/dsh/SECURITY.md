@@ -21,7 +21,9 @@ repository's [SECURITY.md](https://github.com/Jovan1666/commandcode-usage/blob/m
 - A sidebar card. The host half registers exactly one route, `cc-quota/report`, on
   the shared `/api` transport the host already runs; the browser half is a
   hand-authored bundle that renders that route's answer.
-- Reads `settings.yaml` for the provider route and the official CLI credential at
+- Reads the provider route from `settings.yaml` or a patch layer
+  (`cordis.patch.yml` at the DSH home or under `profiles/<name>/`, which is where
+  the desktop app keeps settings), and the official CLI credential at
   `~/.commandcode/auth.json`.
 - The client touches the DOM for exactly two things: injecting one stylesheet keyed
   `.ccq-`, and rendering the card. No `localStorage`, no cookies, no direct network

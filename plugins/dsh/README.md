@@ -206,7 +206,9 @@ Two caveats on those numbers, both from the same page: the request counts assume
 The API key never reaches the browser. The host resolves it in this order and reports which source won:
 
 1. An explicitly passed key (the CLI's `--key`).
-2. **Discovered from your own `$DSH_HOME/settings.yaml`** — any provider route whose `baseURL` points at `commandcode.ai`. The plugin reads that route's literal `apiKey` or its `apiKeyEnv`, then resolves the name through the environment and `$DSH_HOME/.credentials.yaml`. The provider's host is kept (a staging host or proxy works), but only its origin: the quota endpoints live at the host root, not under the provider's `/provider/v1` path.
+2. **Discovered from your own DSH configuration** — any provider route whose `baseURL` points at `commandcode.ai`, read from `$DSH_HOME/settings.yaml` **or a patch layer** (`$DSH_HOME/cordis.patch.yml`, `$DSH_HOME/profiles/<name>/cordis.patch.yml`). The plugin reads that route's literal `apiKey` or its `apiKeyEnv`, then resolves the name through the environment and `$DSH_HOME/.credentials.yaml`. The provider's host is kept (a staging host or proxy works), but only its origin: the quota endpoints live at the host root, not under the provider's `/provider/v1` path.
+
+   Both locations matter because the two DSH flavours keep settings in different places: the CLI writes `settings.yaml`, while the **desktop app** migrates that file to `settings.yaml.imported` on first run and writes user settings into the patch layers from then on. Reading only `settings.yaml` made every desktop install answer `configured: false`, which renders no card and no error.
 3. Environment variables: `COMMANDCODE_API_KEY`, `COMMAND_CODE_API_KEY`, `CMD_API_KEY`, then **any** variable whose name contains `commandcode`.
 4. Those same names inside `$DSH_HOME/.credentials.yaml` (`refs.<NAME>`).
 5. `~/.commandcode/auth.json`, the official `command-code` CLI's login state.

@@ -187,7 +187,9 @@ GOAT 是适合 agent 循环的那一档。Command Code 官方对 **DeepSeek V4 F
 API key 只留在宿主端，浏览器拿不到。宿主按下面的顺序解析，并会报告最终命中的来源：
 
 1. 显式传入的 key（命令行 `--key`）。
-2. **从你自己的 `$DSH_HOME/settings.yaml` 里发现**——任何 `baseURL` 指向 `commandcode.ai` 的 provider 路由。插件读该路由的字面 `apiKey` 或其 `apiKeyEnv`，再按名字去环境变量和 `$DSH_HOME/.credentials.yaml` 里找。主机名会被保留（指向 staging 或代理都行），但只取 origin：额度端点在主机根路径上，不在 provider 的 `/provider/v1` 路径下。
+2. **从你自己的 DSH 配置里发现**——任何 `baseURL` 指向 `commandcode.ai` 的 provider 路由，来源是 `$DSH_HOME/settings.yaml` **或补丁层**（`$DSH_HOME/cordis.patch.yml`、`$DSH_HOME/profiles/<name>/cordis.patch.yml`）。插件读该路由的字面 `apiKey` 或其 `apiKeyEnv`，再按名字去环境变量和 `$DSH_HOME/.credentials.yaml` 里找。主机名会被保留（指向 staging 或代理都行），但只取 origin：额度端点在主机根路径上，不在 provider 的 `/provider/v1` 路径下。
+
+   两个位置都要看，因为两种 DSH 把设置放在不同地方：CLI 写 `settings.yaml`；**桌面端**首次启动会把那个文件迁移成 `settings.yaml.imported`，之后用户设置只写进补丁层。只看 `settings.yaml` 会让每一台桌面端都得到 `configured: false`——卡片不渲染，也没有任何报错。
 3. 环境变量：`COMMANDCODE_API_KEY`、`COMMAND_CODE_API_KEY`、`CMD_API_KEY`，再兜底**任何**名字里含 `commandcode` 的变量。
 4. `$DSH_HOME/.credentials.yaml` 里的同名引用（`refs.<NAME>`）。
 5. `~/.commandcode/auth.json`——官方 `command-code` CLI 的登录态。
