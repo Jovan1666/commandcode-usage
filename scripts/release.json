@@ -27,7 +27,7 @@
         "scripts/verify.mjs",
         "assets/screenshot.png",
         { "path": "package.json", "url": true },
-        { "path": "cordis.patch.yml", "review": true }
+        { "path": "cordis.patch.yml", "divergent": "注释写的是插件住在哪个仓库：本仓库根 vs monorepo 的 plugins/dsh，两端本就不同。" }
       ]
     },
     {
@@ -36,7 +36,7 @@
       "files": [
         { "core": "scripts/cc-usage.mjs" },
         "scripts/setup.mjs",
-        { "path": "commands/quota.md", "review": true },
+        "commands/quota.md",
         { "path": ".claude-plugin/plugin.json", "url": true },
         { "path": ".codex-plugin/plugin.json", "url": true }
       ]
@@ -50,8 +50,8 @@
         "assets/composer-icon.svg",
         "assets/logo.svg",
         "assets/screenshot.png",
-        { "path": "commands/quota.md", "review": true },
-        { "path": ".codexignore", "review": true },
+        "commands/quota.md",
+        { "path": ".codexignore", "divergent": "内容是给 Codex 看的忽略说明：本仓库里 cc-usage.mjs 是唯一实现，monorepo 里它是 core/ 的同步产物、要忽略。取决于布局，两端本就不同。" },
         { "path": ".claude-plugin/plugin.json", "url": true },
         { "path": ".codex-plugin/plugin.json", "url": true }
       ]
@@ -62,7 +62,7 @@
       "files": [
         { "core": "scripts/cc-usage.mjs" },
         "scripts/setup.mjs",
-        { "path": "commands/quota.md", "review": true },
+        "commands/quota.md",
         { "path": "plugin.json", "url": true }
       ]
     },
@@ -72,7 +72,7 @@
       "files": [
         { "core": "src/cc-usage.mjs" },
         "src/index.mjs",
-        { "path": "scripts/setup.mjs", "review": true }
+        "scripts/setup.mjs"
       ]
     },
     {

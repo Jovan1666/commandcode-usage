@@ -27,8 +27,11 @@ const has = (n) => argv.includes(n);
 
 // opencode 要的是绝对 file:// URL，不能是相对路径。
 const ENTRY_URL = pathToFileURL(ENTRY).href;
-// 用它判断某条记录是不是本插件写的（版本变化时路径不变，仍能认出来）。
-const MARK = 'commandcode-usage';
+// 认本插件写过的记录：入口文件的路径对得上，就一定是它写的（这份仓库的目录名叫什么
+// 都行，插件被搬到别处也认得出）。路径对不上时退回按目录名认，这样按旧名字装的记录
+// 也还认得出来。
+const SELF_PATH = fileURLToPath(ENTRY_URL);
+const MARKS = ['opencode-command-code-usage', 'commandcode-usage'];
 
 function readConfig() {
   if (!fs.existsSync(TUI_JSON)) return { $schema: SCHEMA };
@@ -42,7 +45,12 @@ function readConfig() {
 
 const config = readConfig();
 const plugins = Array.isArray(config.plugin) ? config.plugin.filter((p) => typeof p === 'string') : [];
-const mine = (p) => p.includes(MARK);
+const mine = (p) => {
+  try {
+    if (fileURLToPath(p) === SELF_PATH) return true;
+  } catch { /* 不是 file:// URL，按目录名认 */ }
+  return MARKS.some((mark) => p.includes(mark));
+};
 const already = plugins.some(mine);
 
 if (has('--print')) {

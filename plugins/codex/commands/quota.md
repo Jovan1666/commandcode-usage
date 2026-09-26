@@ -7,10 +7,10 @@ Run exactly this block (it already locates the script, so it works however the p
 ```bash
 CC="${CLAUDE_PLUGIN_ROOT}/scripts/cc-usage.mjs"
 if [ ! -f "$CC" ]; then
-  for d in "$HOME/.claude" "$HOME/.codex" "$HOME/.grok" "$HOME/.zcode" "$HOME/.dsh"; do
-    CC=$(find "$d" -maxdepth 6 -type f -name cc-usage.mjs -path '*commandcode*' -print -quit 2>/dev/null)
-    [ -n "$CC" ] && break
-  done
+  # Fallback: Codex's own plugin directory. Only this host's tree is searched — this
+  # repository ships its own copy of the script, and picking up a copy installed for
+  # another host would run code this repository does not control.
+  CC=$(find "$HOME/.codex" -maxdepth 6 -type f -name cc-usage.mjs -path '*commandcode*' -print -quit 2>/dev/null)
 fi
 [ -f "$CC" ] || { echo "找不到 cc-usage.mjs，插件可能未正确安装。"; exit 2; }
 node "$CC" --compact

@@ -73,6 +73,7 @@ const problems = []
 let nOk = 0
 let nMechanical = 0
 let nReview = 0
+let nDivergent = 0
 
 console.log(`monorepo → 独立仓库分发检查（工作区：${workspace}）`)
 
@@ -94,6 +95,13 @@ for (const plugin of config.plugins) {
   for (const raw of plugin.files) {
     const entry = typeof raw === 'string' ? { path: raw } : raw
     const label = entry.core ?? entry.path
+    if (entry.divergent !== undefined) {
+      // 有意不同：文件内容本就依赖仓库布局（"插件住在哪"、"这份副本是不是产物"），
+      // 不是漂移，所以既不写也不报警，只在报告里说明理由。
+      console.log(`  ＝ 有意不同  ${label}  ← ${entry.divergent}`)
+      nDivergent += 1
+      continue
+    }
     if (entry.review === true) {
       const target = path.join(repoDir, entry.core ?? entry.path)
       const source = entry.core !== undefined ? path.join(ROOT, config.core) : path.join(ROOT, plugin.dir, entry.path)
@@ -132,7 +140,7 @@ for (const plugin of config.plugins) {
   }
 }
 
-console.log(`\n合计：一致 ${nOk}｜可自动修复 ${nMechanical}｜需人工合并 ${nReview}`)
+console.log(`\n合计：一致 ${nOk}｜可自动修复 ${nMechanical}｜需人工合并 ${nReview}｜有意不同 ${nDivergent}`)
 if (problems.length > 0) {
   console.log('问题：')
   for (const problem of problems) console.log(`  - ${problem}`)
