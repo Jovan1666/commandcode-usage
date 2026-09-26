@@ -21,6 +21,8 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import { createHash } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -69,6 +71,15 @@ function expected(entry, plugin, coreSource) {
 }
 
 const coreSource = fs.readFileSync(path.join(ROOT, config.core), 'utf8')
+const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex')
+const sourceCommit = (() => {
+  try {
+    return execFileSync('git', ['-C', ROOT, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
+  } catch {
+    // 没有 git（打包副本、CI 里只拷了源码）就只记来源 URL，哈希本身仍是校验依据。
+    return undefined
+  }
+})()
 const problems = []
 let nOk = 0
 let nMechanical = 0
@@ -136,6 +147,63 @@ for (const plugin of config.plugins) {
     } else {
       console.log(`  漂移    ${label}${suffix}${have === null ? '（目标缺失）' : `  repo=${have.length}B 期望=${want.bytes.length}B`}`)
     }
+    nMechanical += 1
+  }
+
+  // 额外文件：从 monorepo 的模板原样复制进仓库（例如核心哈希校验脚本与它的 CI）。
+  const recorded = {}
+  for (const extra of config.extras ?? []) {
+    const source = path.join(ROOT, extra.from)
+    if (!fs.existsSync(source)) {
+      problems.push(`${plugin.repo}: 模板 ${extra.from} 不存在`)
+      continue
+    }
+    const bytes = fs.readFileSync(source)
+    const target = path.join(repoDir, extra.to)
+    const have = fs.existsSync(target) ? fs.readFileSync(target) : null
+    recorded[extra.to] = sha256(bytes)
+    if (have !== null && have.equals(bytes)) {
+      console.log(`  ok      ${extra.to}（模板）`)
+      nOk += 1
+      continue
+    }
+    if (writeMode) {
+      fs.mkdirSync(path.dirname(target), { recursive: true })
+      fs.writeFileSync(target, bytes)
+      console.log(`  写入    ${extra.to}（模板）${have === null ? '（新建）' : ''}`)
+    } else {
+      console.log(`  漂移    ${extra.to}（模板）`)
+    }
+    nMechanical += 1
+  }
+
+  // 同步记录：把「分发产物」的哈希写进仓库，让仓库自己的 CI 能发现就地改动。
+  // 哈希取的是写进仓库的那份内容（含 URL 改写 / 换行归一），不是 monorepo 原文。
+  for (const raw of plugin.files) {
+    const entry = typeof raw === 'string' ? { path: raw } : raw
+    if (entry.divergent !== undefined) continue
+    const want = expected(entry, plugin, coreSource)
+    if (want.missingSource) continue
+    recorded[entry.core ?? entry.path] = sha256(want.bytes)
+  }
+  const record = {
+    source: config.monorepoUrl,
+    ...(sourceCommit === undefined ? {} : { sourceCommit }),
+    note: '本文件由 monorepo 的 scripts/release.mjs 生成：列出本仓库里属于「分发产物」的文件及其 sha256。要改实现请改 monorepo；本仓库的副本被就地改动时 scripts/verify-core.mjs 会报错。',
+    files: Object.fromEntries(Object.entries(recorded).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))),
+  }
+  const recordBytes = Buffer.from(JSON.stringify(record, null, 2) + '\n', 'utf8')
+  const recordTarget = path.join(repoDir, '.sync-source.json')
+  const recordHave = fs.existsSync(recordTarget) ? fs.readFileSync(recordTarget) : null
+  if (recordHave !== null && recordHave.equals(recordBytes)) {
+    console.log(`  ok      .sync-source.json（${Object.keys(record.files).length} 个文件）`)
+    nOk += 1
+  } else if (writeMode) {
+    fs.writeFileSync(recordTarget, recordBytes)
+    console.log(`  写入    .sync-source.json（${Object.keys(record.files).length} 个文件）`)
+    nMechanical += 1
+  } else {
+    console.log('  漂移    .sync-source.json')
     nMechanical += 1
   }
 }

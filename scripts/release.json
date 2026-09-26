@@ -87,8 +87,18 @@
     {
       "repo": "zcode-command-code-usage",
       "dir": "plugins/zcode",
-      "disabled": "该仓库现在只有 LICENSE + 两个 README（提交写着「已迁往 monorepo，本仓库转为指引」）。按方案 A 要重新拆出来，确认后再启用。",
-      "files": []
+      "files": [
+        { "core": "scripts/cc-usage.mjs" },
+        "commands/quota.md",
+        "commands/usage.md",
+        "skills/command-code-usage/SKILL.md",
+        { "path": ".zcode-plugin/plugin.json", "url": true },
+        { "path": ".claude-plugin/plugin.json", "url": true }
+      ]
     }
+  ],
+  "extras": [
+    { "from": "scripts/templates/verify-core.mjs", "to": "scripts/verify-core.mjs" },
+    { "from": "scripts/templates/verify-core.yml", "to": ".github/workflows/verify-core.yml" }
   ]
 }
