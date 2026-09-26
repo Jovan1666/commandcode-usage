@@ -1,0 +1,94 @@
+{
+  "note": "monorepo → 7 个独立仓库的分发清单。只列「两边应当一致」的文件；文档（README/SECURITY/CHANGELOG/LICENSE/.github/docs）由各仓库自己维护，不进清单。review:true 表示该文件两边存在真实内容差异，工具只报不写，等人工合并后再去掉标记。",
+  "monorepoUrl": "https://github.com/Jovan1666/commandcode-usage",
+  "core": "core/cc-usage.mjs",
+  "plugins": [
+    {
+      "repo": "dsh-commandcode-quota",
+      "dir": "plugins/dsh",
+      "files": [
+        "index.js",
+        "client.js",
+        "quota.mjs",
+        "tests/cli.test.mjs",
+        "tests/client.test.mjs",
+        "tests/dynamic.test.mjs",
+        "tests/host.test.mjs",
+        "tests/quota.test.mjs",
+        "cli/cli.mjs",
+        { "path": "cli/ccq.cmd", "eol": "crlf" },
+        "preview/build.mjs",
+        "preview/check-blocks.mjs",
+        "preview/e2e-live.mjs",
+        "preview/e2e-watch.mjs",
+        "preview/latency.mjs",
+        "preview/render-mermaid.mjs",
+        "scripts/audit.mjs",
+        "scripts/verify.mjs",
+        "assets/screenshot.png",
+        { "path": "package.json", "url": true },
+        { "path": "cordis.patch.yml", "review": true }
+      ]
+    },
+    {
+      "repo": "claude-code-command-code-usage",
+      "dir": "plugins/claude-code",
+      "files": [
+        { "core": "scripts/cc-usage.mjs" },
+        "scripts/setup.mjs",
+        { "path": "commands/quota.md", "review": true },
+        { "path": ".claude-plugin/plugin.json", "url": true },
+        { "path": ".codex-plugin/plugin.json", "url": true }
+      ]
+    },
+    {
+      "repo": "codex-command-code-usage",
+      "dir": "plugins/codex",
+      "files": [
+        { "core": "scripts/cc-usage.mjs" },
+        "hooks/hooks.json",
+        "assets/composer-icon.svg",
+        "assets/logo.svg",
+        "assets/screenshot.png",
+        { "path": "commands/quota.md", "review": true },
+        { "path": ".codexignore", "review": true },
+        { "path": ".claude-plugin/plugin.json", "url": true },
+        { "path": ".codex-plugin/plugin.json", "url": true }
+      ]
+    },
+    {
+      "repo": "grok-command-code-usage",
+      "dir": "plugins/grok",
+      "files": [
+        { "core": "scripts/cc-usage.mjs" },
+        "scripts/setup.mjs",
+        { "path": "commands/quota.md", "review": true },
+        { "path": "plugin.json", "url": true }
+      ]
+    },
+    {
+      "repo": "opencode-command-code-usage",
+      "dir": "plugins/opencode",
+      "files": [
+        { "core": "src/cc-usage.mjs" },
+        "src/index.mjs",
+        { "path": "scripts/setup.mjs", "review": true }
+      ]
+    },
+    {
+      "repo": "pi-command-code-usage",
+      "dir": "plugins/pi",
+      "files": [
+        { "core": "src/cc-usage.mjs" },
+        "index.ts",
+        { "path": "package.json", "url": true }
+      ]
+    },
+    {
+      "repo": "zcode-command-code-usage",
+      "dir": "plugins/zcode",
+      "disabled": "该仓库现在只有 LICENSE + 两个 README（提交写着「已迁往 monorepo，本仓库转为指引」）。按方案 A 要重新拆出来，确认后再启用。",
+      "files": []
+    }
+  ]
+}
