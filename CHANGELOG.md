@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- **A slow Command Code made three of the four readings vanish, and the monthly row with them.** The data
+  layer gave every endpoint 15 s. On 2026-09-30 the vendor's own `server-timing` header self-reported
+  `total;dur=14018.0` for `/alpha/usage/summary` (against `dur=43.0` for `/alpha/billing/credits`), so three
+  readings were aborted locally while the data was seconds away, and the card said 「3 项数据这次没取到」with no
+  monthly row. The default deadline is now 30 s, and `COMMANDCODE_QUOTA_TIMEOUT_MS` moves it (1 s–120 s) without
+  waiting for a release. Covered by the `dynamic` suite (「a slow endpoint that answers inside the deadline costs
+  nothing」).
+
+- **A `200` body that reported a failure of its own was read as data, silently.** While degraded,
+  `/alpha/billing/subscriptions` answers `200 {"success":false,"error":"write CONNECTION_CLOSED …"}`. The
+  envelope parsed as a record with no `.data`, so the plan disappeared from the card *and* `failures` stayed
+  empty — the one case the plugin's own 「nothing silent」 rule exists to prevent. A failure envelope is now a
+  failed read: it is named in `failures` with the vendor's own message, and four of them classify as a service
+  problem rather than a network one. Covered by the `dynamic` suite (「a string failure envelope is a failed
+  read, named in failures」).
+
 - **The DSH desktop app could never show the card, and said nothing about it.** The plugin discovered
   your Command Code provider route by reading `$DSH_HOME/settings.yaml` only. The Electron app
   migrates that file to `settings.yaml.imported` on first launch and keeps user settings in the patch
