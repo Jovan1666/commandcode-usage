@@ -1140,13 +1140,20 @@ export function catalogView({ catalog, bundled, planId, configuredModels = [], n
     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
   });
 
-  const planLevelRow = entry === undefined
-    ? undefined
-    : (catalog.planLevel?.rows ?? []).find((row) => row.label === entry.planName || row.label.startsWith(entry.planName));
+  // The plan-level overview row is looked up by the tier's own label first: plans the
+  // vendor publishes no per-model page for (Teams Pro, Provider) still have a headline
+  // here, and Max/Ultra own separate rows (10× / 20×) that a name-prefix match would
+  // confuse with each other.
+  const planLevelLabel = planId === undefined ? undefined : PLAN_LEVEL_LABELS[planId];
+  const planLevelRow = (catalog.planLevel?.rows ?? []).find((row) => (
+    (planLevelLabel !== undefined && row.label === planLevelLabel)
+    || (entry !== undefined && (row.label === entry.planName || row.label.startsWith(entry.planName)))
+  ));
 
   return {
     ...empty,
-    planName: entry?.planName,
+    // A plan with no per-model page still has a name worth showing: the overview row's.
+    planName: entry?.planName ?? planLevelRow?.label,
     docUrl: entry?.docUrl ?? null,
     inferredFrom: entry?.inferredFrom,
     basis: entry?.basis ?? null,

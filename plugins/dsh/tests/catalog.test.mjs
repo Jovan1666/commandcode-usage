@@ -1050,12 +1050,15 @@ const viewFile = tmpFile('view.json')
     assert.equal(result.verified, false)
     assert.ok(result.warnings.includes('catalog-bundled-baseline'))
   })
-  check('a plan the catalog does not carry yields an empty list and a named warning', () => {
+  check('a plan with no per-model page still gets its name and its plan-level headline', () => {
     const result = view({ planId: 'teams-pro' })
     assert.deepEqual(result.models, [])
     assert.deepEqual(result.coverage, { published: 0, derived: 0, available: 0 })
-    assert.equal(result.planName, undefined)
+    // Teams publishes one number, not a table: the overview row is what it has.
+    assert.equal(result.planName, 'Team Pro')
     assert.equal(result.docUrl, null)
+    assert.equal(result.planLevel.label, 'Team Pro')
+    assert.equal(result.planLevel.requests, 35_000)
     assert.ok(result.warnings.includes('catalog-plan-not-listed:teams-pro'))
   })
   check('the failures of the last round are surfaced in the view', () => {
