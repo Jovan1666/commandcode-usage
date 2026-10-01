@@ -65,7 +65,7 @@ console.log(personal.length === 0 ? '  干净' : personal.map((h) => `  -  ${h.f
  * both get audited here:
  *
  *   1. the seed exists, parses, carries the right kind/version/schema and stays
- *      under 256 KB (bigger means upstream page bodies leaked into it);
+ *      under 384 KB (bigger means upstream page bodies leaked into it);
  *   2. `scripts/catalog-seed.mjs --check` recomputes every count in the seed from
  *      the inputs the seed stores -- CI goes red when the formula moves and
  *      nobody regenerates the baseline;
@@ -76,7 +76,7 @@ console.log(personal.length === 0 ? '  干净' : personal.map((h) => `  -  ${h.f
 
 const SEED_FILE = path.join(ROOT, 'catalog.seed.json')
 const FIXTURES_DIR = path.join(ROOT, 'tests', 'fixtures')
-const MAX_SEED_BYTES = 256 * 1024
+const MAX_SEED_BYTES = 384 * 1024
 const catalogProblems = []
 const problem = (message) => catalogProblems.push(message)
 
@@ -93,7 +93,7 @@ if (!existsSync(SEED_FILE)) {
     problem(`catalog.seed.json 不是合法 JSON：${error.message}`)
   }
   if (seed !== undefined && seed !== null && typeof seed === 'object') {
-    for (const [key, expected] of [['kind', 'commandcode-catalog'], ['version', 1], ['schema', 1]]) {
+    for (const [key, expected] of [['kind', 'commandcode-catalog'], ['version', 1], ['schema', 2]]) {
       if (seed[key] !== expected) problem(`catalog.seed.json 的 ${key} 应为 ${JSON.stringify(expected)}，实际 ${JSON.stringify(seed[key])}`)
     }
     if (seed.plans === null || typeof seed.plans !== 'object' || Object.keys(seed.plans).length === 0) {

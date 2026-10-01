@@ -141,9 +141,9 @@ window.__ModuleLoader__.load({
         // Settings-panel section: the plan-level overview, the per-model table,
         // and every line that qualifies them. Nothing here may imply a number
         // the official site never published — see formatCount().
-        nav: '套餐 × 模型调用量',
-        title: '套餐与模型调用量',
-        intro: '当前套餐下，每个模型大概能调用多少次。',
+        nav: '调用次数',
+        title: '模型调用次数',
+        intro: '当前套餐下，每个模型大概还能调用多少次。数字按官方的模型额度、单价和一次典型请求的用量换算，仅供参考。',
         loading: '正在读取官方次数表…',
         planFallback: '当前套餐',
         planLevel: '套餐级额度',
@@ -157,6 +157,7 @@ window.__ModuleLoader__.load({
         notGiven: '官方未给',
         dashNote: '「—」表示官方没有公布这个模型的次数，不是 0 次。',
         freeNote: '「Free」是官方标注的免费/不限量，不是我们算出来的数字。',
+        derivedNote: '按官方 provider 默认形状推算',
         peak: '峰时：每月 {monthly} · 5 小时 {fiveHour} · 每周 {week}',
         requestsFallback: '约 {count} 次请求',
         expand: '展开全部 {count} 个模型',
@@ -206,9 +207,9 @@ window.__ModuleLoader__.load({
         errGeneric: 'could not read the account',
 
         // Settings-panel section; see the zh block for the reasoning.
-        nav: 'Plan × model calls',
-        title: 'Plan and per-model calls',
-        intro: 'Roughly how many calls each model allows on the current plan.',
+        nav: 'Call counts',
+        title: 'Model call counts',
+        intro: 'Roughly how many calls each model allows on the current plan. Estimated from the official model allowance, token prices, and one typical request — a reference, not a limit.',
         loading: 'Reading the official call table…',
         planFallback: 'Current plan',
         planLevel: 'Plan allowance',
@@ -220,8 +221,9 @@ window.__ModuleLoader__.load({
         colFiveHour: '5-hour',
         colWeek: 'Weekly',
         notGiven: 'not published',
-        dashNote: '“—” means the official table publishes no count for this model. It does not mean zero.',
+        dashNote: '“—” means the official table publishes no figure for this model. It does not mean zero.',
         freeNote: '“Free” is the site’s own wording for a free/unlimited model, not a number we computed.',
+        derivedNote: 'derived from the provider default shape',
         peak: 'Peak: {monthly} monthly · {fiveHour} 5-hour · {week} weekly',
         requestsFallback: '~{count} requests',
         expand: 'Show all {count} models',
@@ -301,17 +303,23 @@ window.__ModuleLoader__.load({
    panel is wide with 24px padding, so this block sets its own scale and caps
    the line length: a table stretched across a 1600px window is worse to read
    than one at 760px, and the numbers stay paired with their model name. */
-.ccq-sec{box-sizing:border-box;width:100%;max-width:760px;text-align:left;
+.ccq-sec{box-sizing:border-box;width:100%;text-align:left;
   color:var(--dsw-alias-label-primary);font-family:inherit;font-size:13px;line-height:20px}
-.ccq-sec-title{margin:0;font-size:15px;font-weight:600;line-height:22px}
-.ccq-sec-intro{margin:4px 0 0;font-size:12px;line-height:18px;color:var(--dsw-alias-label-caption)}
-.ccq-panel{margin-top:12px;padding:12px 14px;border-radius:12px;
-  border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-button-elevated-fill)}
+.ccq-sec-title{margin:0;font-size:16px;font-weight:500;line-height:24px}
+.ccq-sec-intro{margin:4px 0 0;font-size:14px;line-height:22px;color:var(--dsw-alias-label-tertiary)}
+.ccq-panel{margin-top:12px;padding:12px 14px;border-radius:var(--dsw-radius-xl);
+  border:.5px solid var(--dsw-alias-settings-card-stroke);background:var(--dsw-alias-settings-card-fill)}
 .ccq-sec .ccq-note{margin-top:8px}
 .ccq-sec .ccq-warn{margin-top:8px}
+/* The settings nav draws its own icon before the section label, picked from a
+   hard-coded table of built-in ids; a plugin's own mark therefore arrives as the
+   label's first child, and the built-in fallback has to be hidden — otherwise the
+   row shows a gear and an hourglass side by side. */
+.ccq-navmark{display:inline-flex;align-items:center;gap:6px;vertical-align:-3px}
+button:has(.ccq-navmark)>svg:first-child{display:none}
 .ccq-table-wrap{margin-top:10px;overflow-x:auto}
 .ccq-table{width:100%;border-collapse:collapse;font-size:13px;line-height:18px}
-.ccq-table th,.ccq-table td{padding:7px 8px;border-bottom:1px solid var(--dsw-alias-border-l1)}
+.ccq-table th,.ccq-table td{padding:7px 8px;border-bottom:.5px solid var(--dsw-alias-border-l2)}
 .ccq-table thead th{font-size:12px;font-weight:500;color:var(--dsw-alias-label-caption);white-space:nowrap}
 .ccq-table tbody tr:last-child th,.ccq-table tbody tr:last-child td{border-bottom:none}
 .ccq-table .ccq-num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -1099,6 +1107,7 @@ window.__ModuleLoader__.load({
         h('th', { scope: 'row', className: 'ccq-model' },
           name,
           noCount(model) ? h('span', { className: 'ccq-tag' }, t('notGiven')) : null,
+          model.derived === true ? h('span', { className: 'ccq-tag', title: t('derivedNote') }, t('derivedNote')) : null,
         ),
         h('td', { className: 'ccq-num' }, formatCount(countOf(model, 'monthly'))),
         h('td', { className: 'ccq-num' }, formatCount(countOf(model, 'fiveHour'))),
@@ -1124,6 +1133,31 @@ window.__ModuleLoader__.load({
             t,
           }))),
         ),
+      )
+    }
+
+    /**
+     * This section's own mark: an hourglass, at the size and stroke the built-in
+     * icons use (16px box, 1.3 stroke, single `currentColor`, no fill).
+     *
+     * It reads as "how much of the allowance is left to spend", which is what the
+     * section is about, and it is the one shape in this icon set that nothing else
+     * uses — the alternative the host offers is a fallback gear, and borrowing a
+     * built-in id would put the wrong label next to someone else's picture.
+     */
+    function CcqCallsMark({ size = 16 }) {
+      return h('svg', {
+        width: size,
+        height: size,
+        viewBox: '0 0 16 16',
+        fill: 'none',
+        xmlns: 'http://www.w3.org/2000/svg',
+        'aria-hidden': 'true',
+        strokeWidth: 1.3,
+      },
+        h('path', { d: 'M3.9 2.5H12.1L8 7L3.9 2.5Z', stroke: 'currentColor' }),
+        h('path', { d: 'M3.9 13.5H12.1L8 9L3.9 13.5Z', stroke: 'currentColor' }),
+        h('circle', { cx: 8, cy: 5.6, r: 1.15, fill: 'currentColor', stroke: 'none' }),
       )
     }
 
@@ -1269,11 +1303,17 @@ window.__ModuleLoader__.load({
 
       // Settings panel: one section on the same ledger as the built-in sections,
       // ordered after every one of them (account -10 … agent-presets 20).
+      //
+      // The nav row renders `navIcon(id)` first and the label after it, and the icon
+      // lookup is a hard-coded table that only knows the built-in ids — a plugin has
+      // no `icon` option and gets the fallback gear. The label, however, is rendered
+      // as a React child, so it is the one channel a plugin has for its own mark:
+      // the node below carries our icon, and the stylesheet hides the gear.
       ctx.slots.inject('settings.section', () => ctx.slots.register({
         name: 'settings.section',
         id: 'commandcode-quota',
         order: 100,
-        label: () => t('nav'),
+        label: () => h('span', { className: 'ccq-navmark' }, h(CcqCallsMark, { size: 16 }), t('nav')),
         locale: NS,
         inject: () => ({
           // `payload` is optional; the default `{ catalog: true }` lets the host

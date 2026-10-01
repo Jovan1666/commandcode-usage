@@ -42,8 +42,13 @@ export const CATALOG_KIND = 'commandcode-catalog';
 /** 文件格式版本；读不认识就当没有缓存。 */
 export const CATALOG_VERSION = 1;
 
-/** 解析与计算口径版本；变了就强制重解析（不看哈希），并把内置 seed 判为过期。 */
-export const CATALOG_SCHEMA = 1;
+/**
+ * 解析与计算口径版本；变了就强制重解析（不看哈希），并把旧缓存/旧 seed 直接判为过期。
+ *
+ * v2：加入「按官方 provider 默认形状推算」「免费模型」「Go 两代按 planId 取窗口系数」
+ * 三条口径。旧缓存里的 coverage 与模型行都缺这些信息，必须重算而不是接着用。
+ */
+export const CATALOG_SCHEMA = 2;
 
 /** 距上次**核对**超过这么久，才值得再问一次官方。 */
 export const CATALOG_TTL_MS = 24 * 3_600_000;
@@ -80,8 +85,18 @@ export const PLAN_DOC_URLS = Object.freeze({
   'teams-pro': undefined,
 });
 
-/** 官方 Go 页的窗口系数与用量页口径不一致（$3/$6 vs $2/$5），只有这一代按页面值。 */
-const GO_V1_FRACTIONS = Object.freeze({ fiveHourFraction: 0.3, weeklyFraction: 0.6 });
+/**
+ * Go 两代的窗口系数，按**完整 planId** 取，不能按短 tier（`go`）取。
+ *
+ * Go 页 props 给的是 $3/$6 那一代（0.3/0.6），而官方用量页与定价页对新版
+ * `individual-go` 写的是 $2/$5（0.2/0.5）。短 tier 是**多对一**的
+ * （`go` ← `individual-go` + `individual-go-v1`），盲信页面 props 会让新版 Go
+ * 用户的 5 小时/每周次数**高估 50%**。
+ */
+const GO_FRACTIONS = Object.freeze({
+  'individual-go': { fiveHourFraction: 0.2, weeklyFraction: 0.5 },
+  'individual-go-v1': { fiveHourFraction: 0.3, weeklyFraction: 0.6 },
+});
 
 /**
  * planId → 定价页概览表里的行标签。
@@ -552,10 +567,9 @@ export function parsePlanCatalog(planId, text, options = {}) {
         : { code: 'PARSE_MISMATCH', message: `${doc.url} 里找不到模型次数表（站点可能改版）` },
     };
   }
-  // Go 新版页面的窗口系数与用量页口径不一致：按 planId 取权威窗口，别盲信页面 props。
-  const fractions = planId === 'individual-go-v1'
-    ? GO_V1_FRACTIONS
-    : { fiveHourFraction: estimates.fiveHourFraction, weeklyFraction: estimates.weeklyFraction };
+  // Go 两代按 planId 取权威窗口（见 GO_FRACTIONS）；其余档位用页面 props。
+  const fractions = GO_FRACTIONS[planId]
+    ?? { fiveHourFraction: estimates.fiveHourFraction, weeklyFraction: estimates.weeklyFraction };
 
   // 可用性数据（定价页）是精简后的形状：{ id, name, deprecated?, availableIn: [planId…] }。
   const availability = Array.isArray(options.availability) ? options.availability : [];
@@ -603,8 +617,9 @@ export function parsePlanCatalog(planId, text, options = {}) {
     });
   }
 
-  // 官方表不覆盖全部可用模型（GOAT 51/63）：把「套餐能用但官方没给次数」的模型补上并标注，
-  // 而不是让它们悄悄消失，也不是补一个 0。
+  // 官方表不覆盖全部可用模型（GOAT 51/63）：把「套餐能用但官方套餐页没给次数」的
+  // 模型补上。定价页的计算器里通常有它们的逐档额度与单价，那就按官方自己的做法
+  // 推一个形状算出来（打上 shapeSource 标记），真的一点数据都没有才显示「—」。
   const extras = [];
   for (const row of availability) {
     if (typeof row.id !== 'string' || row.deprecated === true) continue;
@@ -612,15 +627,30 @@ export function parsePlanCatalog(planId, text, options = {}) {
     const key = normalizeModelKey(row.id);
     if (key === undefined || seen.has(key)) continue;
     seen.add(key);
+    const tier = PLAN_CALCULATOR_TIERS[planId];
+    const budgetUsd = tier === undefined ? undefined : row.allowanceByTier?.[tier];
+    const derived = typeof budgetUsd === 'number' && Number.isFinite(budgetUsd) && row.rates !== undefined
+      ? (() => {
+        const shape = derivedShape(row.provider);
+        return { shape, allowance: computeAllowance({ budgetUsd, rates: row.rates, shape }, fractions, options.now) };
+      })()
+      : undefined;
     extras.push({
       key,
       name: typeof row.name === 'string' && row.name !== '' ? row.name : row.id,
       modelId: row.id,
-      monthly: undefined,
-      fiveHour: undefined,
-      week: undefined,
-      free: false,
-      source: 'availability-only',
+      budgetUsd: derived === undefined ? undefined : budgetUsd,
+      rates: derived === undefined ? undefined : row.rates,
+      shape: derived === undefined ? undefined : derived.shape,
+      // 推导来的数字必须能被认出来：界面据此说明「按官方 provider 默认形状推算」。
+      shapeSource: derived === undefined ? undefined : 'derived-from-provider',
+      monthly: derived?.allowance.monthly,
+      fiveHour: derived?.allowance.fiveHour,
+      week: derived?.allowance.week,
+      // 免费模型没有「次数」这回事：官方自己渲染成 "Free"。它属于「有数据」，
+      // 不属于「官方没公布」。
+      free: derived?.allowance.free ?? row.free === true,
+      source: derived === undefined ? (row.free === true ? 'free' : 'availability-only') : 'derived',
     });
   }
   extras.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
@@ -722,7 +752,48 @@ export async function fetchCatalogDoc(url, options = {}) {
 }
 
 /**
- * 解析定价页：模型可用性（精简到我们需要的字段）+ 套餐级概览表。
+ * planId → 定价页计算器里的档位键。
+ *
+ * 计算器只覆盖 go / goat / pro（官方只公布这三档的逐模型 `planAllowanceUsd`）。
+ * Max 与 Ultra 在那一页只有档位级概览，没有逐模型额度，所以对它们不做按量推导。
+ */
+export const PLAN_CALCULATOR_TIERS = Object.freeze({
+  'individual-go': 'go',
+  'individual-go-v1': 'go',
+  'individual-goat': 'goat',
+  'individual-pro': 'pro',
+  'individual-pro-v1': 'pro',
+});
+
+/**
+ * 官方计算器在模型没有自带 `shape` 时，按 provider 推输出 token 数；未收录的落 200。
+ *
+ * 这份映射抄自站点自己的源码。注意套餐页的 `rows[]` **总是**带 `shape`，所以它只
+ * 用于「套餐页没列、但定价页有额度」的那些模型 —— 推导出来的数字会打上
+ * `shapeSource: 'derived-from-provider'`，界面必须说明它是推算的。
+ */
+const PROVIDER_OUTPUT_TOKENS = Object.freeze({
+  Anthropic: 180,
+  OpenAI: 160,
+  'Moonshot AI': 200,
+  'Z.ai': 150,
+  MiniMax: 125,
+  DeepSeek: 200,
+  Alibaba: 200,
+  StepFun: 200,
+});
+
+/** 推导形状里与 provider 无关的两项：官方固定 800 输入 / 50,000 缓存读。 */
+const DERIVED_INPUT_TOKENS = 800;
+const DERIVED_CACHE_READ_TOKENS = 50_000;
+const DEFAULT_OUTPUT_TOKENS = 200;
+
+/**
+ * 解析定价页：模型可用性（精简字段）+ 每模型额度 + 套餐级概览表。
+ *
+ * 这一页承担两件事：planId → 模型可用性（全站唯一能把插件的 planId 和模型对上号
+ * 的地方），以及**计算器**里每个模型的逐档额度与单价 —— 套餐页没列出的模型靠它
+ * 才有次数可算，否则那些模型只能显示「官方未给次数」。
  *
  * @param {string} text RSC 正文。
  * @returns {{ models: object[], planLevel: object[] }|{ error: { code: string, message: string } }}
@@ -730,8 +801,14 @@ export async function fetchCatalogDoc(url, options = {}) {
 export function parsePricingCatalog(text) {
   const availability = parseAvailability(text);
   const planLevel = parsePlanLevel(text);
+  const calculator = parseCalculator(text);
   if (availability === undefined && planLevel.length === 0) {
     return { error: { code: 'PARSE_MISMATCH', message: `${PRICING_DOC_URL} 里既没有可用性表也没有套餐概览表（站点可能改版）` } };
+  }
+  const byKey = new Map();
+  for (const row of calculator) {
+    const key = normalizeModelKey(row.id);
+    if (key !== undefined) byKey.set(key, row);
   }
   const models = [];
   for (const row of availability?.rows ?? []) {
@@ -739,14 +816,67 @@ export function parsePricingCatalog(text) {
     const availableIn = Object.entries(row.availability ?? {})
       .filter(([planId, ok]) => ok === true && planId !== 'all')
       .map(([planId]) => planId);
+    const extra = byKey.get(normalizeModelKey(row.id));
     models.push({
       id: row.id,
       name: typeof row.name === 'string' && row.name !== '' ? row.name : row.id,
       deprecated: row.deprecated === true,
       availableIn,
+      // 免费模型（官方标注 deal.free / 单价全 0）应显示 "Free"，不该被塞进
+      // 「官方没公布次数」那一桶 —— 它们不是没数据，是数据就是无限。
+      free: row.deal?.free === true
+        || (Array.isArray(row.tiers) && row.tiers.length > 0
+          && [row.tiers[0]?.rates?.input, row.tiers[0]?.rates?.output, row.tiers[0]?.rates?.cacheRead]
+            .every((rate) => rate === 0)),
+      // 计算器里的逐档额度与单价：套餐页没列出的模型靠它拿次数。
+      provider: extra?.provider,
+      allowanceByTier: extra?.allowanceByTier,
+      rates: extra?.rates,
     });
   }
   return { models, planLevel };
+}
+
+/**
+ * 解析定价页的「计算器」表：每模型的 provider、逐档额度与单价。
+ *
+ * 结构签名：props.models 里每行都带 `planAllowanceUsd`（对象）与三个数值单价。
+ * 该表**按设计不带 `shape`** —— 缺形状时由 provider 推导，见上面的映射表。
+ *
+ * @param {string} text RSC 正文。
+ * @returns {Array<{ id: string, provider?: string, allowanceByTier?: object, rates?: object }>}
+ */
+export function parseCalculator(text) {
+  for (const record of parseFlightRecords(text)) {
+    const props = componentProps(record.value);
+    if (props === undefined || !Array.isArray(props.models) || props.models.length === 0) continue;
+    const rows = props.models.filter((row) => row !== null && typeof row === 'object'
+      && typeof row.id === 'string'
+      && row.planAllowanceUsd !== null && typeof row.planAllowanceUsd === 'object'
+      && typeof row.inputCost === 'number');
+    if (rows.length !== props.models.length) continue;
+    return rows.map((row) => ({
+      id: row.id,
+      provider: typeof row.provider === 'string' ? row.provider : undefined,
+      allowanceByTier: row.planAllowanceUsd,
+      rates: { inputCost: row.inputCost, outputCost: row.outputCost, cacheReadCost: row.cacheReadCost },
+    }));
+  }
+  return [];
+}
+
+/**
+ * 一个没有官方 `shape` 的模型，按 provider 推出的典型请求形状。
+ * @param {string|undefined} provider 官方 provider 名。
+ * @returns {{ inputTokens: number, outputTokens: number, cacheReadTokens: number }}
+ */
+export function derivedShape(provider) {
+  const mapped = typeof provider === 'string' ? PROVIDER_OUTPUT_TOKENS[provider] : undefined;
+  return {
+    inputTokens: DERIVED_INPUT_TOKENS,
+    outputTokens: mapped ?? DEFAULT_OUTPUT_TOKENS,
+    cacheReadTokens: DERIVED_CACHE_READ_TOKENS,
+  };
 }
 
 /**
@@ -996,7 +1126,11 @@ export function catalogView({ catalog, bundled, planId, configuredModels = [], n
       free: model.free === true,
       peak: model.peak,
       configured: configured.has(model.key),
-      estimated: model.source === 'plan-doc',
+      // 有数字（官方套餐页给的，或按官方计算器+provider 默认形状推的）vs 完全没有。
+      estimated: model.source === 'plan-doc' || model.source === 'derived',
+      // 推算来的：界面必须说明它来自 provider 默认形状，而不是套餐页公布的形状。
+      derived: model.source === 'derived',
+      shapeSource: model.shapeSource,
     });
   }
   // 你配的模型置顶；同组内官方给了次数的在前，名字升序，保证顺序稳定可预期。
@@ -1025,8 +1159,11 @@ export function catalogView({ catalog, bundled, planId, configuredModels = [], n
       sourceUrl: PRICING_DOC_URL,
     },
     models,
-    coverage: { published: entry?.publishedModels ?? 0, available: entry?.availableModels ?? 0 },
-    stale: !(Number.isFinite(age) && age < ttlMs),
+    coverage: {
+      published: entry?.publishedModels ?? 0,
+      derived: (entry?.models ?? []).filter((model) => model.source === 'derived').length,
+      available: entry?.availableModels ?? 0,
+    },    stale: !(Number.isFinite(age) && age < ttlMs),
     warnings,
   };
 }

@@ -1,19 +1,19 @@
 {
  "kind": "commandcode-catalog",
  "version": 1,
- "schema": 1,
- "updatedAt": "2026-10-01T18:51:09.648Z",
- "checkedAt": "2026-10-01T18:51:09.648Z",
+ "schema": 2,
+ "updatedAt": "2026-10-01T19:22:21.647Z",
+ "checkedAt": "2026-10-01T19:22:21.647Z",
  "fetchMode": "etag",
- "bundledAt": "2026-10-01T18:51:09.648Z",
+ "bundledAt": "2026-10-01T19:22:21.647Z",
  "plans": {
   "individual-go": {
    "planId": "individual-go",
    "planName": "Go",
    "docUrl": "https://commandcode.ai/docs/plans/go",
    "fractions": {
-    "fiveHourFraction": 0.3,
-    "weeklyFraction": 0.6
+    "fiveHourFraction": 0.2,
+    "weeklyFraction": 0.5
    },
    "basis": {
     "inputTokens": 800,
@@ -32,13 +32,13 @@
       "cacheReadCost": 0.003
      },
      "monthly": 15384.615384615383,
-     "fiveHour": 4615.384615384614,
-     "week": 9230.769230769229,
+     "fiveHour": 3076.9230769230767,
+     "week": 7692.3076923076915,
      "free": false,
      "peak": {
       "monthly": 7692.3076923076915,
-      "fiveHour": 2307.692307692307,
-      "week": 4615.384615384614
+      "fiveHour": 1538.4615384615383,
+      "week": 3846.1538461538457
      },
      "source": "plan-doc"
     },
@@ -53,13 +53,13 @@
       "cacheReadCost": 0.003
      },
      "monthly": 25641.025641025637,
-     "fiveHour": 7692.307692307691,
-     "week": 15384.615384615381,
+     "fiveHour": 5128.205128205128,
+     "week": 12820.512820512819,
      "free": false,
      "peak": {
       "monthly": 12820.512820512819,
-      "fiveHour": 3846.1538461538453,
-      "week": 7692.307692307691
+      "fiveHour": 2564.102564102564,
+      "week": 6410.256410256409
      },
      "source": "plan-doc"
     },
@@ -74,13 +74,13 @@
       "cacheReadCost": 0.016
      },
      "monthly": 5747.126436781609,
-     "fiveHour": 1724.1379310344828,
-     "week": 3448.2758620689656,
+     "fiveHour": 1149.4252873563219,
+     "week": 2873.5632183908046,
      "free": false,
      "peak": {
       "monthly": 2873.5632183908046,
-      "fiveHour": 862.0689655172414,
-      "week": 1724.1379310344828
+      "fiveHour": 574.7126436781609,
+      "week": 1436.7816091954023
      },
      "source": "plan-doc"
     },
@@ -100,8 +100,8 @@
       "cacheReadTokens": 50000
      },
      "monthly": 676.5899864682002,
-     "fiveHour": 202.97699594046006,
-     "week": 405.9539918809201,
+     "fiveHour": 135.31799729364005,
+     "week": 338.2949932341001,
      "free": false,
      "source": "plan-doc"
     },
@@ -121,8 +121,8 @@
       "cacheReadTokens": 50000
      },
      "monthly": 4437.869822485208,
-     "fiveHour": 1331.3609467455624,
-     "week": 2662.721893491125,
+     "fiveHour": 887.5739644970416,
+     "week": 2218.934911242604,
      "free": false,
      "source": "plan-doc"
     },
@@ -136,8 +136,8 @@
       "cacheReadCost": 0.035
      },
      "monthly": 5055.6117290192105,
-     "fiveHour": 1516.6835187057632,
-     "week": 3033.3670374115263,
+     "fiveHour": 1011.1223458038421,
+     "week": 2527.8058645096053,
      "free": false,
      "source": "plan-doc"
     },
@@ -152,8 +152,8 @@
       "cacheReadCost": 0.04
      },
      "monthly": 3424.6575342465753,
-     "fiveHour": 1027.3972602739725,
-     "week": 2054.794520547945,
+     "fiveHour": 684.9315068493152,
+     "week": 1712.3287671232877,
      "free": false,
      "source": "plan-doc"
     },
@@ -168,8 +168,8 @@
       "cacheReadCost": 0.25
      },
      "monthly": 457.516339869281,
-     "fiveHour": 137.2549019607843,
-     "week": 274.5098039215686,
+     "fiveHour": 91.50326797385621,
+     "week": 228.7581699346405,
      "free": false,
      "source": "plan-doc"
     },
@@ -184,8 +184,8 @@
       "cacheReadCost": 0.5
      },
      "monthly": 350.8771929824561,
-     "fiveHour": 105.26315789473684,
-     "week": 210.52631578947367,
+     "fiveHour": 70.17543859649122,
+     "week": 175.43859649122805,
      "free": false,
      "source": "plan-doc"
     },
@@ -200,8 +200,8 @@
       "cacheReadCost": 0.08
      },
      "monthly": 2155.1724137931033,
-     "fiveHour": 646.5517241379309,
-     "week": 1293.1034482758619,
+     "fiveHour": 431.0344827586207,
+     "week": 1077.5862068965516,
      "free": false,
      "source": "plan-doc"
     },
@@ -216,8 +216,8 @@
       "cacheReadCost": 0.1
      },
      "monthly": 1666.6666666666663,
-     "fiveHour": 499.9999999999999,
-     "week": 999.9999999999998,
+     "fiveHour": 333.33333333333326,
+     "week": 833.3333333333331,
      "free": false,
      "source": "plan-doc"
     },
@@ -237,8 +237,8 @@
       "cacheReadTokens": 50000
      },
      "monthly": 2359.882005899705,
-     "fiveHour": 707.9646017699114,
-     "week": 1415.9292035398228,
+     "fiveHour": 471.976401179941,
+     "week": 1179.9410029498524,
      "free": false,
      "source": "plan-doc"
     },
@@ -253,8 +253,8 @@
       "cacheReadCost": 0.19
      },
      "monthly": 813.7432188065098,
-     "fiveHour": 244.12296564195293,
-     "week": 488.24593128390586,
+     "fiveHour": 162.748643761302,
+     "week": 406.8716094032549,
      "free": false,
      "source": "plan-doc"
     },
@@ -269,8 +269,8 @@
       "cacheReadCost": 0.3
      },
      "monthly": 392.156862745098,
-     "fiveHour": 117.64705882352939,
-     "week": 235.29411764705878,
+     "fiveHour": 78.43137254901961,
+     "week": 196.078431372549,
      "free": false,
      "source": "plan-doc"
     },
@@ -290,8 +290,8 @@
       "cacheReadTokens": 50000
      },
      "monthly": 5899.705014749262,
-     "fiveHour": 1769.9115044247785,
-     "week": 3539.823008849557,
+     "fiveHour": 1179.9410029498524,
+     "week": 2949.852507374631,
      "free": false,
      "source": "plan-doc"
     },
@@ -306,8 +306,8 @@
       "cacheReadCost": 0.006
      },
      "monthly": 12820.512820512819,
-     "fiveHour": 3846.1538461538453,
-     "week": 7692.307692307691,
+     "fiveHour": 2564.102564102564,
+     "week": 6410.256410256409,
      "free": false,
      "source": "plan-doc"
     },
@@ -322,8 +322,8 @@
       "cacheReadCost": 0.0028
      },
      "monthly": 19480.51948051948,
-     "fiveHour": 5844.155844155844,
-     "week": 11688.311688311687,
+     "fiveHour": 3896.103896103896,
+     "week": 9740.25974025974,
      "free": false,
      "source": "plan-doc"
     },
@@ -338,13 +338,13 @@
       "cacheReadCost": 0.022
      },
      "monthly": 2964.4268774703555,
-     "fiveHour": 889.3280632411066,
-     "week": 1778.6561264822133,
+     "fiveHour": 592.8853754940711,
+     "week": 1482.2134387351778,
      "free": false,
      "peak": {
       "monthly": 1482.2134387351778,
-      "fiveHour": 444.6640316205533,
-      "week": 889.3280632411066
+      "fiveHour": 296.44268774703556,
+      "week": 741.1067193675889
      },
      "source": "plan-doc"
     },
@@ -359,8 +359,8 @@
       "cacheReadCost": 0.0036
      },
      "monthly": 8547.008547008547,
-     "fiveHour": 2564.102564102564,
-     "week": 5128.205128205128,
+     "fiveHour": 1709.4017094017095,
+     "week": 4273.504273504273,
      "free": false,
      "source": "plan-doc"
     },
@@ -380,8 +380,8 @@
       "cacheReadTokens": 50000
      },
      "monthly": 9090.90909090909,
-     "fiveHour": 2727.272727272727,
-     "week": 5454.545454545454,
+     "fiveHour": 1818.181818181818,
+     "week": 4545.454545454545,
      "free": false,
      "source": "plan-doc"
     },
@@ -396,8 +396,8 @@
       "cacheReadCost": 0.016
      },
      "monthly": 5917.159763313609,
-     "fiveHour": 1775.1479289940826,
-     "week": 3550.295857988165,
+     "fiveHour": 1183.4319526627219,
+     "week": 2958.5798816568044,
      "free": false,
      "source": "plan-doc"
     },
@@ -412,8 +412,8 @@
       "cacheReadCost": 0.25
      },
      "monthly": 457.516339869281,
-     "fiveHour": 137.2549019607843,
-     "week": 274.5098039215686,
+     "fiveHour": 91.50326797385621,
+     "week": 228.7581699346405,
      "free": false,
      "source": "plan-doc"
     },
@@ -427,8 +427,8 @@
       "cacheReadCost": 0.042
      },
      "monthly": 1836.322458223664,
-     "fiveHour": 550.8967374670991,
-     "week": 1101.7934749341982,
+     "fiveHour": 367.2644916447328,
+     "week": 918.161229111832,
      "free": false,
      "source": "plan-doc"
     },
@@ -443,8 +443,8 @@
       "cacheReadCost": 0.016
      },
      "monthly": 5870.841487279843,
-     "fiveHour": 1761.2524461839528,
-     "week": 3522.5048923679055,
+     "fiveHour": 1174.1682974559687,
+     "week": 2935.4207436399215,
      "free": false,
      "source": "plan-doc"
     },
@@ -464,8 +464,8 @@
       "cacheReadTokens": 50000
      },
      "monthly": 1417.2670367308376,
-     "fiveHour": 425.1801110192513,
-     "week": 850.3602220385026,
+     "fiveHour": 283.4534073461675,
+     "week": 708.6335183654188,
      "free": false,
      "source": "plan-doc"
     },
@@ -479,13 +479,13 @@
       "cacheReadCost": 0.003
      },
      "monthly": 15384.615384615383,
-     "fiveHour": 4615.384615384614,
-     "week": 9230.769230769229,
+     "fiveHour": 3076.9230769230767,
+     "week": 7692.3076923076915,
      "free": false,
      "peak": {
       "monthly": 7692.3076923076915,
-      "fiveHour": 2307.692307692307,
-      "week": 4615.384615384614
+      "fiveHour": 1538.4615384615383,
+      "week": 3846.1538461538457
      },
      "source": "plan-doc"
     },
@@ -500,8 +500,8 @@
       "cacheReadCost": 0.07
      },
      "monthly": 2085.5057351407713,
-     "fiveHour": 625.6517205422314,
-     "week": 1251.3034410844627,
+     "fiveHour": 417.1011470281543,
+     "week": 1042.7528675703857,
      "free": false,
      "source": "plan-doc"
     },
@@ -521,8 +521,8 @@
       "cacheReadTokens": 50000
      },
      "monthly": 676.5899864682002,
-     "fiveHour": 202.97699594046006,
-     "week": 405.9539918809201,
+     "fiveHour": 135.31799729364005,
+     "week": 338.2949932341001,
      "free": false,
      "source": "plan-doc"
     },
@@ -537,8 +537,8 @@
       "cacheReadCost": 0.002
      },
      "monthly": 27272.72727272727,
-     "fiveHour": 8181.81818181818,
-     "week": 16363.63636363636,
+     "fiveHour": 5454.545454545454,
+     "week": 13636.363636363634,
      "free": false,
      "source": "plan-doc"
     },
@@ -553,8 +553,8 @@
       "cacheReadCost": 0.002
      },
      "monthly": 27272.72727272727,
-     "fiveHour": 8181.81818181818,
-     "week": 16363.63636363636,
+     "fiveHour": 5454.545454545454,
+     "week": 13636.363636363634,
      "free": false,
      "source": "plan-doc"
     },
@@ -569,8 +569,8 @@
       "cacheReadCost": 0.38
      },
      "monthly": 271.24773960216993,
-     "fiveHour": 81.37432188065098,
-     "week": 162.74864376130196,
+     "fiveHour": 54.24954792043399,
+     "week": 135.62386980108496,
      "free": false,
      "source": "plan-doc"
     },
@@ -585,8 +585,8 @@
       "cacheReadCost": 0.5
      },
      "monthly": 215.82733812949638,
-     "fiveHour": 64.74820143884891,
-     "week": 129.49640287769782,
+     "fiveHour": 43.16546762589928,
+     "week": 107.91366906474819,
      "free": false,
      "source": "plan-doc"
     },
@@ -606,8 +606,8 @@
       "cacheReadTokens": 50000
      },
      "monthly": 311.01511879049673,
-     "fiveHour": 93.30453563714902,
-     "week": 186.60907127429803,
+     "fiveHour": 62.20302375809935,
+     "week": 155.50755939524836,
      "free": false,
      "source": "plan-doc"
     },
@@ -622,8 +622,8 @@
       "cacheReadCost": 0.17
      },
      "monthly": 593.4718100890207,
-     "fiveHour": 178.0415430267062,
-     "week": 356.0830860534124,
+     "fiveHour": 118.69436201780414,
+     "week": 296.73590504451033,
      "free": false,
      "source": "plan-doc"
     },
@@ -638,8 +638,8 @@
       "cacheReadCost": 0.1
      },
      "monthly": 1063.8297872340424,
-     "fiveHour": 319.1489361702127,
-     "week": 638.2978723404254,
+     "fiveHour": 212.7659574468085,
+     "week": 531.9148936170212,
      "free": false,
      "source": "plan-doc"
     },
@@ -654,8 +654,8 @@
       "cacheReadCost": 0.0036
      },
      "monthly": 8547.008547008547,
-     "fiveHour": 2564.102564102564,
-     "week": 5128.205128205128,
+     "fiveHour": 1709.4017094017095,
+     "week": 4273.504273504273,
      "free": false,
      "source": "plan-doc"
     },
@@ -670,8 +670,8 @@
       "cacheReadCost": 0.0028
      },
      "monthly": 19480.51948051948,
-     "fiveHour": 5844.155844155844,
-     "week": 11688.311688311687,
+     "fiveHour": 3896.103896103896,
+     "week": 9740.25974025974,
      "free": false,
      "source": "plan-doc"
     },
@@ -686,8 +686,8 @@
       "cacheReadCost": 0.05
      },
      "monthly": 1562.4999999999998,
-     "fiveHour": 468.7499999999999,
-     "week": 937.4999999999998,
+     "fiveHour": 312.5,
+     "week": 781.2499999999999,
      "free": false,
      "source": "plan-doc"
     },
@@ -702,8 +702,8 @@
       "cacheReadCost": 0.04
      },
      "monthly": 2510.460251046025,
-     "fiveHour": 753.1380753138075,
-     "week": 1506.276150627615,
+     "fiveHour": 502.092050209205,
+     "week": 1255.2301255230125,
      "free": false,
      "source": "plan-doc"
     },
@@ -718,8 +718,8 @@
       "cacheReadCost": 0.02
      },
      "monthly": 5300.3533568904595,
-     "fiveHour": 1590.1060070671379,
-     "week": 3180.2120141342757,
+     "fiveHour": 1060.070671378092,
+     "week": 2650.1766784452298,
      "free": false,
      "source": "plan-doc"
     },
@@ -734,8 +734,8 @@
       "cacheReadCost": 0.12
      },
      "monthly": 862.0689655172414,
-     "fiveHour": 258.6206896551724,
-     "week": 517.2413793103448,
+     "fiveHour": 172.41379310344828,
+     "week": 431.0344827586207,
      "free": false,
      "source": "plan-doc"
     },
@@ -743,111 +743,276 @@
      "key": "deepseek-v4-flash-vision-exp",
      "name": "DeepSeek V4 Flash Vision (exp)",
      "modelId": "deepseek-v4-flash-vision-exp",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.15,
+      "outputCost": 0.6,
+      "cacheReadCost": 0.003
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 15384.615384615383,
+     "fiveHour": 3076.9230769230767,
+     "week": 7692.3076923076915,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5",
      "name": "GLM-5",
      "modelId": "glm-5",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 1,
+      "outputCost": 3.2,
+      "cacheReadCost": 0.2
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 531.9148936170212,
+     "fiveHour": 106.38297872340425,
+     "week": 265.9574468085106,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5-1",
      "name": "GLM-5.1",
      "modelId": "glm-5.1",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 1.4,
+      "outputCost": 4.4,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 405.9539918809201,
+     "fiveHour": 81.19079837618403,
+     "week": 202.97699594046006,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-5",
      "name": "Kimi K2.5",
      "modelId": "kimi-k2.5",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.6,
+      "outputCost": 3,
+      "cacheReadCost": 0.1
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 986.8421052631577,
+     "fiveHour": 197.36842105263156,
+     "week": 493.42105263157885,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-6",
      "name": "Kimi K2.6",
      "modelId": "kimi-k2.6",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.95,
+      "outputCost": 4,
+      "cacheReadCost": 0.16
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 627.6150627615062,
+     "fiveHour": 125.52301255230125,
+     "week": 313.8075313807531,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "laguna-s-2-1-free",
      "name": "Laguna S 2.1",
      "modelId": "laguna-s-2.1-free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-0-flash-sante-free",
      "name": "Ling 3.0 Flash Sante",
      "modelId": "ling-3.0-flash-sante:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-1-flash-free",
      "name": "Ling 3.1 Flash",
      "modelId": "ling-3.1-flash:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "minimax-m2-5",
      "name": "MiniMax M2.5",
      "modelId": "minimax-m2.5",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.03
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 3174.6031746031745,
+     "fiveHour": 634.9206349206349,
+     "week": 1587.3015873015872,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "minimax-m2-7",
      "name": "MiniMax M2.7",
      "modelId": "minimax-m2.7",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.06
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1769.9115044247787,
+     "fiveHour": 353.98230088495575,
+     "week": 884.9557522123894,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-6-max",
      "name": "Qwen 3.6 Max Preview",
      "modelId": "qwen-3.6-max",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 1.3,
+      "outputCost": 7.8,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 384.6153846153846,
+     "fiveHour": 76.92307692307692,
+     "week": 192.3076923076923,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-7-flash",
      "name": "Qwen 3.7 Flash",
      "modelId": "qwen-3.7-flash",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.03,
+      "outputCost": 0.13,
+      "cacheReadCost": 0.006
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 17142.85714285714,
+     "fiveHour": 3428.5714285714284,
+     "week": 8571.42857142857,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "space-bunny-alpha",
      "name": "Space Bunny Alpha",
      "modelId": "space-bunny-alpha",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "hy3-paid",
      "name": "Tencent Hy3",
      "modelId": "tencent/hy3-paid",
+     "budgetUsd": 10,
+     "rates": {
+      "inputCost": 0.14,
+      "outputCost": 0.58,
+      "cacheReadCost": 0.035
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 5055.6117290192105,
+     "fiveHour": 1011.1223458038421,
+     "week": 2527.8058645096053,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "hy4-preview",
      "name": "Tencent Hy4 Preview",
      "modelId": "tencent/hy4-preview",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.834,
+      "outputCost": 2.501,
+      "cacheReadCost": 0.042
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1836.322458223664,
+     "fiveHour": 367.2644916447328,
+     "week": 918.161229111832,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     }
    ],
    "publishedModels": 41,
    "availableModels": 56,
-   "fetchedAt": "2026-10-01T18:51:09.648Z"
+   "fetchedAt": "2026-10-01T19:22:21.647Z"
   },
   "individual-go-v1": {
    "planId": "individual-go-v1",
@@ -1585,111 +1750,276 @@
      "key": "deepseek-v4-flash-vision-exp",
      "name": "DeepSeek V4 Flash Vision (exp)",
      "modelId": "deepseek-v4-flash-vision-exp",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.15,
+      "outputCost": 0.6,
+      "cacheReadCost": 0.003
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 15384.615384615383,
+     "fiveHour": 4615.384615384614,
+     "week": 9230.769230769229,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5",
      "name": "GLM-5",
      "modelId": "glm-5",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 1,
+      "outputCost": 3.2,
+      "cacheReadCost": 0.2
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 531.9148936170212,
+     "fiveHour": 159.57446808510636,
+     "week": 319.1489361702127,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5-1",
      "name": "GLM-5.1",
      "modelId": "glm-5.1",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 1.4,
+      "outputCost": 4.4,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 405.9539918809201,
+     "fiveHour": 121.78619756427602,
+     "week": 243.57239512855205,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-5",
      "name": "Kimi K2.5",
      "modelId": "kimi-k2.5",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.6,
+      "outputCost": 3,
+      "cacheReadCost": 0.1
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 986.8421052631577,
+     "fiveHour": 296.0526315789473,
+     "week": 592.1052631578946,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-6",
      "name": "Kimi K2.6",
      "modelId": "kimi-k2.6",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.95,
+      "outputCost": 4,
+      "cacheReadCost": 0.16
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 627.6150627615062,
+     "fiveHour": 188.28451882845187,
+     "week": 376.56903765690373,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "laguna-s-2-1-free",
      "name": "Laguna S 2.1",
      "modelId": "laguna-s-2.1-free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-0-flash-sante-free",
      "name": "Ling 3.0 Flash Sante",
      "modelId": "ling-3.0-flash-sante:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-1-flash-free",
      "name": "Ling 3.1 Flash",
      "modelId": "ling-3.1-flash:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "minimax-m2-5",
      "name": "MiniMax M2.5",
      "modelId": "minimax-m2.5",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.03
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 3174.6031746031745,
+     "fiveHour": 952.3809523809523,
+     "week": 1904.7619047619046,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "minimax-m2-7",
      "name": "MiniMax M2.7",
      "modelId": "minimax-m2.7",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.06
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1769.9115044247787,
+     "fiveHour": 530.9734513274336,
+     "week": 1061.9469026548672,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-6-max",
      "name": "Qwen 3.6 Max Preview",
      "modelId": "qwen-3.6-max",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 1.3,
+      "outputCost": 7.8,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 384.6153846153846,
+     "fiveHour": 115.38461538461537,
+     "week": 230.76923076923075,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-7-flash",
      "name": "Qwen 3.7 Flash",
      "modelId": "qwen-3.7-flash",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.03,
+      "outputCost": 0.13,
+      "cacheReadCost": 0.006
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 17142.85714285714,
+     "fiveHour": 5142.857142857142,
+     "week": 10285.714285714284,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "space-bunny-alpha",
      "name": "Space Bunny Alpha",
      "modelId": "space-bunny-alpha",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "hy3-paid",
      "name": "Tencent Hy3",
      "modelId": "tencent/hy3-paid",
+     "budgetUsd": 10,
+     "rates": {
+      "inputCost": 0.14,
+      "outputCost": 0.58,
+      "cacheReadCost": 0.035
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 5055.6117290192105,
+     "fiveHour": 1516.6835187057632,
+     "week": 3033.3670374115263,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "hy4-preview",
      "name": "Tencent Hy4 Preview",
      "modelId": "tencent/hy4-preview",
+     "budgetUsd": 6,
+     "rates": {
+      "inputCost": 0.834,
+      "outputCost": 2.501,
+      "cacheReadCost": 0.042
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1836.322458223664,
+     "fiveHour": 550.8967374670991,
+     "week": 1101.7934749341982,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     }
    ],
    "publishedModels": 41,
    "availableModels": 56,
-   "fetchedAt": "2026-10-01T18:51:09.648Z"
+   "fetchedAt": "2026-10-01T19:22:21.647Z"
   },
   "individual-goat": {
    "planId": "individual-goat",
@@ -2787,111 +3117,276 @@
      "key": "deepseek-v4-flash-vision-exp",
      "name": "DeepSeek V4 Flash Vision (exp)",
      "modelId": "deepseek-v4-flash-vision-exp",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 0.15,
+      "outputCost": 0.6,
+      "cacheReadCost": 0.003
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 51282.051282051274,
+     "fiveHour": 10256.410256410256,
+     "week": 25641.025641025637,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5",
      "name": "GLM-5",
      "modelId": "glm-5",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 1,
+      "outputCost": 3.2,
+      "cacheReadCost": 0.2
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1773.0496453900707,
+     "fiveHour": 354.60992907801415,
+     "week": 886.5248226950354,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5-1",
      "name": "GLM-5.1",
      "modelId": "glm-5.1",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 1.4,
+      "outputCost": 4.4,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1353.1799729364004,
+     "fiveHour": 270.6359945872801,
+     "week": 676.5899864682002,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-5",
      "name": "Kimi K2.5",
      "modelId": "kimi-k2.5",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 0.6,
+      "outputCost": 3,
+      "cacheReadCost": 0.1
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 3289.473684210526,
+     "fiveHour": 657.8947368421052,
+     "week": 1644.736842105263,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-6",
      "name": "Kimi K2.6",
      "modelId": "kimi-k2.6",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 0.95,
+      "outputCost": 4,
+      "cacheReadCost": 0.16
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 2092.0502092050206,
+     "fiveHour": 418.41004184100416,
+     "week": 1046.0251046025103,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "laguna-s-2-1-free",
      "name": "Laguna S 2.1",
      "modelId": "laguna-s-2.1-free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-0-flash-sante-free",
      "name": "Ling 3.0 Flash Sante",
      "modelId": "ling-3.0-flash-sante:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-1-flash-free",
      "name": "Ling 3.1 Flash",
      "modelId": "ling-3.1-flash:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "minimax-m2-5",
      "name": "MiniMax M2.5",
      "modelId": "minimax-m2.5",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.03
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 10582.010582010582,
+     "fiveHour": 2116.4021164021165,
+     "week": 5291.005291005291,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "minimax-m2-7",
      "name": "MiniMax M2.7",
      "modelId": "minimax-m2.7",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.06
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 5899.705014749262,
+     "fiveHour": 1179.9410029498524,
+     "week": 2949.852507374631,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-6-max",
      "name": "Qwen 3.6 Max Preview",
      "modelId": "qwen-3.6-max",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 1.3,
+      "outputCost": 7.8,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1282.051282051282,
+     "fiveHour": 256.4102564102564,
+     "week": 641.025641025641,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-7-flash",
      "name": "Qwen 3.7 Flash",
      "modelId": "qwen-3.7-flash",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 0.03,
+      "outputCost": 0.13,
+      "cacheReadCost": 0.006
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 57142.85714285714,
+     "fiveHour": 11428.571428571428,
+     "week": 28571.42857142857,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "space-bunny-alpha",
      "name": "Space Bunny Alpha",
      "modelId": "space-bunny-alpha",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "hy3-paid",
      "name": "Tencent Hy3",
      "modelId": "tencent/hy3-paid",
+     "budgetUsd": 70,
+     "rates": {
+      "inputCost": 0.14,
+      "outputCost": 0.58,
+      "cacheReadCost": 0.035
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 35389.28210313448,
+     "fiveHour": 7077.856420626897,
+     "week": 17694.64105156724,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "hy4-preview",
      "name": "Tencent Hy4 Preview",
      "modelId": "tencent/hy4-preview",
+     "budgetUsd": 20,
+     "rates": {
+      "inputCost": 0.834,
+      "outputCost": 2.501,
+      "cacheReadCost": 0.042
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 6121.074860745546,
+     "fiveHour": 1224.2149721491094,
+     "week": 3060.537430372773,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     }
    ],
    "publishedModels": 51,
    "availableModels": 66,
-   "fetchedAt": "2026-10-01T18:51:09.648Z"
+   "fetchedAt": "2026-10-01T19:22:21.647Z"
   },
   "individual-pro": {
    "planId": "individual-pro",
@@ -4253,111 +4748,276 @@
      "key": "deepseek-v4-flash-vision-exp",
      "name": "DeepSeek V4 Flash Vision (exp)",
      "modelId": "deepseek-v4-flash-vision-exp",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.15,
+      "outputCost": 0.6,
+      "cacheReadCost": 0.003
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 76923.07692307691,
+     "fiveHour": 15384.615384615383,
+     "week": 38461.538461538454,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5",
      "name": "GLM-5",
      "modelId": "glm-5",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 1,
+      "outputCost": 3.2,
+      "cacheReadCost": 0.2
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 2659.5744680851058,
+     "fiveHour": 531.9148936170212,
+     "week": 1329.7872340425529,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5-1",
      "name": "GLM-5.1",
      "modelId": "glm-5.1",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 1.4,
+      "outputCost": 4.4,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 2029.7699594046005,
+     "fiveHour": 405.9539918809201,
+     "week": 1014.8849797023003,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-5",
      "name": "Kimi K2.5",
      "modelId": "kimi-k2.5",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.6,
+      "outputCost": 3,
+      "cacheReadCost": 0.1
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 4934.210526315788,
+     "fiveHour": 986.8421052631577,
+     "week": 2467.105263157894,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-6",
      "name": "Kimi K2.6",
      "modelId": "kimi-k2.6",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.95,
+      "outputCost": 4,
+      "cacheReadCost": 0.16
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 3138.075313807531,
+     "fiveHour": 627.6150627615062,
+     "week": 1569.0376569037655,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "laguna-s-2-1-free",
      "name": "Laguna S 2.1",
      "modelId": "laguna-s-2.1-free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-0-flash-sante-free",
      "name": "Ling 3.0 Flash Sante",
      "modelId": "ling-3.0-flash-sante:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-1-flash-free",
      "name": "Ling 3.1 Flash",
      "modelId": "ling-3.1-flash:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "minimax-m2-5",
      "name": "MiniMax M2.5",
      "modelId": "minimax-m2.5",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.03
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 15873.015873015873,
+     "fiveHour": 3174.603174603175,
+     "week": 7936.507936507936,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "minimax-m2-7",
      "name": "MiniMax M2.7",
      "modelId": "minimax-m2.7",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.06
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 8849.557522123892,
+     "fiveHour": 1769.9115044247785,
+     "week": 4424.778761061946,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-6-max",
      "name": "Qwen 3.6 Max Preview",
      "modelId": "qwen-3.6-max",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 1.3,
+      "outputCost": 7.8,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1923.0769230769229,
+     "fiveHour": 384.6153846153846,
+     "week": 961.5384615384614,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-7-flash",
      "name": "Qwen 3.7 Flash",
      "modelId": "qwen-3.7-flash",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.03,
+      "outputCost": 0.13,
+      "cacheReadCost": 0.006
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 85714.2857142857,
+     "fiveHour": 17142.85714285714,
+     "week": 42857.14285714285,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "space-bunny-alpha",
      "name": "Space Bunny Alpha",
      "modelId": "space-bunny-alpha",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "hy3-paid",
      "name": "Tencent Hy3",
      "modelId": "tencent/hy3-paid",
+     "budgetUsd": 80,
+     "rates": {
+      "inputCost": 0.14,
+      "outputCost": 0.58,
+      "cacheReadCost": 0.035
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 40444.893832153684,
+     "fiveHour": 8088.978766430737,
+     "week": 20222.446916076842,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "hy4-preview",
      "name": "Tencent Hy4 Preview",
      "modelId": "tencent/hy4-preview",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.834,
+      "outputCost": 2.501,
+      "cacheReadCost": 0.042
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 9181.61229111832,
+     "fiveHour": 1836.322458223664,
+     "week": 4590.80614555916,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     }
    ],
    "publishedModels": 65,
    "availableModels": 80,
-   "fetchedAt": "2026-10-01T18:51:09.648Z"
+   "fetchedAt": "2026-10-01T19:22:21.647Z"
   },
   "individual-pro-v1": {
    "planId": "individual-pro-v1",
@@ -5719,111 +6379,276 @@
      "key": "deepseek-v4-flash-vision-exp",
      "name": "DeepSeek V4 Flash Vision (exp)",
      "modelId": "deepseek-v4-flash-vision-exp",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.15,
+      "outputCost": 0.6,
+      "cacheReadCost": 0.003
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 76923.07692307691,
+     "fiveHour": 15384.615384615383,
+     "week": 38461.538461538454,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5",
      "name": "GLM-5",
      "modelId": "glm-5",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 1,
+      "outputCost": 3.2,
+      "cacheReadCost": 0.2
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 2659.5744680851058,
+     "fiveHour": 531.9148936170212,
+     "week": 1329.7872340425529,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "glm-5-1",
      "name": "GLM-5.1",
      "modelId": "glm-5.1",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 1.4,
+      "outputCost": 4.4,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 150,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 2029.7699594046005,
+     "fiveHour": 405.9539918809201,
+     "week": 1014.8849797023003,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-5",
      "name": "Kimi K2.5",
      "modelId": "kimi-k2.5",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.6,
+      "outputCost": 3,
+      "cacheReadCost": 0.1
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 4934.210526315788,
+     "fiveHour": 986.8421052631577,
+     "week": 2467.105263157894,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "kimi-k2-6",
      "name": "Kimi K2.6",
      "modelId": "kimi-k2.6",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.95,
+      "outputCost": 4,
+      "cacheReadCost": 0.16
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 3138.075313807531,
+     "fiveHour": 627.6150627615062,
+     "week": 1569.0376569037655,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "laguna-s-2-1-free",
      "name": "Laguna S 2.1",
      "modelId": "laguna-s-2.1-free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-0-flash-sante-free",
      "name": "Ling 3.0 Flash Sante",
      "modelId": "ling-3.0-flash-sante:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-1-flash-free",
      "name": "Ling 3.1 Flash",
      "modelId": "ling-3.1-flash:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "minimax-m2-5",
      "name": "MiniMax M2.5",
      "modelId": "minimax-m2.5",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.03
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 15873.015873015873,
+     "fiveHour": 3174.603174603175,
+     "week": 7936.507936507936,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "minimax-m2-7",
      "name": "MiniMax M2.7",
      "modelId": "minimax-m2.7",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.3,
+      "outputCost": 1.2,
+      "cacheReadCost": 0.06
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 125,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 8849.557522123892,
+     "fiveHour": 1769.9115044247785,
+     "week": 4424.778761061946,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-6-max",
      "name": "Qwen 3.6 Max Preview",
      "modelId": "qwen-3.6-max",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 1.3,
+      "outputCost": 7.8,
+      "cacheReadCost": 0.26
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 1923.0769230769229,
+     "fiveHour": 384.6153846153846,
+     "week": 961.5384615384614,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "qwen-3-7-flash",
      "name": "Qwen 3.7 Flash",
      "modelId": "qwen-3.7-flash",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.03,
+      "outputCost": 0.13,
+      "cacheReadCost": 0.006
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 85714.2857142857,
+     "fiveHour": 17142.85714285714,
+     "week": 42857.14285714285,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "space-bunny-alpha",
      "name": "Space Bunny Alpha",
      "modelId": "space-bunny-alpha",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "hy3-paid",
      "name": "Tencent Hy3",
      "modelId": "tencent/hy3-paid",
+     "budgetUsd": 80,
+     "rates": {
+      "inputCost": 0.14,
+      "outputCost": 0.58,
+      "cacheReadCost": 0.035
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 40444.893832153684,
+     "fiveHour": 8088.978766430737,
+     "week": 20222.446916076842,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     },
     {
      "key": "hy4-preview",
      "name": "Tencent Hy4 Preview",
      "modelId": "tencent/hy4-preview",
+     "budgetUsd": 30,
+     "rates": {
+      "inputCost": 0.834,
+      "outputCost": 2.501,
+      "cacheReadCost": 0.042
+     },
+     "shape": {
+      "inputTokens": 800,
+      "outputTokens": 200,
+      "cacheReadTokens": 50000
+     },
+     "shapeSource": "derived-from-provider",
+     "monthly": 9181.61229111832,
+     "fiveHour": 1836.322458223664,
+     "week": 4590.80614555916,
      "free": false,
-     "source": "availability-only"
+     "source": "derived"
     }
    ],
    "publishedModels": 65,
    "availableModels": 80,
-   "fetchedAt": "2026-10-01T18:51:09.648Z"
+   "fetchedAt": "2026-10-01T19:22:21.647Z"
   },
   "individual-max": {
    "planId": "individual-max",
@@ -7420,22 +8245,22 @@
      "key": "laguna-s-2-1-free",
      "name": "Laguna S 2.1",
      "modelId": "laguna-s-2.1-free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-0-flash-sante-free",
      "name": "Ling 3.0 Flash Sante",
      "modelId": "ling-3.0-flash-sante:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-1-flash-free",
      "name": "Ling 3.1 Flash",
      "modelId": "ling-3.1-flash:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "qwen-3-6-max",
@@ -7461,7 +8286,7 @@
    ],
    "publishedModels": 87,
    "availableModels": 94,
-   "fetchedAt": "2026-10-01T18:51:09.648Z"
+   "fetchedAt": "2026-10-01T19:22:21.647Z"
   },
   "individual-ultra": {
    "planId": "individual-ultra",
@@ -9059,22 +9884,22 @@
      "key": "laguna-s-2-1-free",
      "name": "Laguna S 2.1",
      "modelId": "laguna-s-2.1-free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-0-flash-sante-free",
      "name": "Ling 3.0 Flash Sante",
      "modelId": "ling-3.0-flash-sante:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "ling-3-1-flash-free",
      "name": "Ling 3.1 Flash",
      "modelId": "ling-3.1-flash:free",
-     "free": false,
-     "source": "availability-only"
+     "free": true,
+     "source": "free"
     },
     {
      "key": "qwen-3-6-max",
@@ -9100,7 +9925,7 @@
    ],
    "publishedModels": 87,
    "availableModels": 94,
-   "fetchedAt": "2026-10-01T18:51:09.648Z"
+   "fetchedAt": "2026-10-01T19:22:21.647Z"
   }
  },
  "pricing": {
@@ -9119,7 +9944,8 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": true
    },
    {
     "id": "laguna-s-2.1-free",
@@ -9135,13 +9961,15 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": true
    },
    {
     "id": "ling-3.0-flash-free",
     "name": "Ling 3.0 Flash",
     "deprecated": true,
-    "availableIn": []
+    "availableIn": [],
+    "free": true
    },
    {
     "id": "ling-3.0-flash-sante:free",
@@ -9157,7 +9985,8 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": true
    },
    {
     "id": "ling-3.1-flash:free",
@@ -9173,7 +10002,8 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": true
    },
    {
     "id": "tencent/hy4-preview",
@@ -9189,7 +10019,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Tencent",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.834,
+     "outputCost": 2.501,
+     "cacheReadCost": 0.042
+    }
    },
    {
     "id": "tencent/hy3-paid",
@@ -9205,7 +10047,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Tencent",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 70,
+     "pro": 80
+    },
+    "rates": {
+     "inputCost": 0.14,
+     "outputCost": 0.58,
+     "cacheReadCost": 0.035
+    }
    },
    {
     "id": "kimi-k3",
@@ -9221,7 +10075,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Moonshot AI",
+    "allowanceByTier": {
+     "go": 8,
+     "goat": 60,
+     "pro": 70
+    },
+    "rates": {
+     "inputCost": 3,
+     "outputCost": 15,
+     "cacheReadCost": 0.3
+    }
    },
    {
     "id": "kimi-k2.7-code",
@@ -9237,7 +10103,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Moonshot AI",
+    "allowanceByTier": {
+     "go": 9,
+     "goat": 60,
+     "pro": 70
+    },
+    "rates": {
+     "inputCost": 0.95,
+     "outputCost": 4,
+     "cacheReadCost": 0.19
+    }
    },
    {
     "id": "kimi-k2.7-code-highspeed",
@@ -9253,7 +10131,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Moonshot AI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1.9,
+     "outputCost": 8,
+     "cacheReadCost": 0.38
+    }
    },
    {
     "id": "kimi-k2.6",
@@ -9269,7 +10159,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Moonshot AI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.95,
+     "outputCost": 4,
+     "cacheReadCost": 0.16
+    }
    },
    {
     "id": "kimi-k2.5",
@@ -9285,7 +10187,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Moonshot AI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.6,
+     "outputCost": 3,
+     "cacheReadCost": 0.1
+    }
    },
    {
     "id": "glm-5.3-flash",
@@ -9301,7 +10215,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Z.ai",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 60,
+     "pro": 70
+    },
+    "rates": {
+     "inputCost": 0.15,
+     "outputCost": 0.5,
+     "cacheReadCost": 0.03
+    }
    },
    {
     "id": "glm-5.3-flashx",
@@ -9317,7 +10243,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Z.ai",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.37,
+     "outputCost": 1.25,
+     "cacheReadCost": 0.075
+    }
    },
    {
     "id": "glm-5.3",
@@ -9333,7 +10271,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Z.ai",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1.4,
+     "outputCost": 4.4,
+     "cacheReadCost": 0.26
+    }
    },
    {
     "id": "glm-5.2",
@@ -9349,7 +10299,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Z.ai",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 70,
+     "pro": 80
+    },
+    "rates": {
+     "inputCost": 1.4,
+     "outputCost": 4.4,
+     "cacheReadCost": 0.26
+    }
    },
    {
     "id": "glm-5.2-fast",
@@ -9365,7 +10327,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Z.ai",
+    "allowanceByTier": {
+     "go": 9,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 3,
+     "outputCost": 10.25,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "glm-5.1",
@@ -9381,7 +10355,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Z.ai",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1.4,
+     "outputCost": 4.4,
+     "cacheReadCost": 0.26
+    }
    },
    {
     "id": "glm-5",
@@ -9397,7 +10383,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Z.ai",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1,
+     "outputCost": 3.2,
+     "cacheReadCost": 0.2
+    }
    },
    {
     "id": "minimax-m3",
@@ -9413,7 +10411,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "MiniMax",
+    "allowanceByTier": {
+     "go": 8,
+     "goat": 47,
+     "pro": 57
+    },
+    "rates": {
+     "inputCost": 0.3,
+     "outputCost": 1.2,
+     "cacheReadCost": 0.06
+    }
    },
    {
     "id": "minimax-m2.7",
@@ -9429,7 +10439,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "MiniMax",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.3,
+     "outputCost": 1.2,
+     "cacheReadCost": 0.06
+    }
    },
    {
     "id": "minimax-m2.5",
@@ -9445,7 +10467,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "MiniMax",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.3,
+     "outputCost": 1.2,
+     "cacheReadCost": 0.03
+    }
    },
    {
     "id": "deepseek-v4-pro",
@@ -9461,7 +10495,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "DeepSeek",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.66,
+     "outputCost": 1.98,
+     "cacheReadCost": 0.022
+    }
    },
    {
     "id": "deepseek-v4-flash",
@@ -9477,7 +10523,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "DeepSeek",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 60,
+     "pro": 70
+    },
+    "rates": {
+     "inputCost": 0.15,
+     "outputCost": 0.6,
+     "cacheReadCost": 0.003
+    }
    },
    {
     "id": "deepseek-v4-flash-vision-exp",
@@ -9493,7 +10551,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "DeepSeek",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.15,
+     "outputCost": 0.6,
+     "cacheReadCost": 0.003
+    }
    },
    {
     "id": "deepseek-v4-flash-fast",
@@ -9509,7 +10579,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "DeepSeek",
+    "allowanceByTier": {
+     "go": 8,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.28,
+     "outputCost": 0.56,
+     "cacheReadCost": 0.07
+    }
    },
    {
     "id": "deepseek-v4.1-flash",
@@ -9525,7 +10607,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "DeepSeek",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 60,
+     "pro": 70
+    },
+    "rates": {
+     "inputCost": 0.15,
+     "outputCost": 0.6,
+     "cacheReadCost": 0.003
+    }
    },
    {
     "id": "deepseek-v4.1-flash-fast",
@@ -9541,7 +10635,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "DeepSeek",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 60,
+     "pro": 70
+    },
+    "rates": {
+     "inputCost": 0.16,
+     "outputCost": 0.58,
+     "cacheReadCost": 0.016
+    }
    },
    {
     "id": "qwen-3.8-omni-flash",
@@ -9557,7 +10663,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.15,
+     "outputCost": 0.47,
+     "cacheReadCost": 0.016
+    }
    },
    {
     "id": "qwen-3.8-max-0902",
@@ -9573,7 +10691,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 7,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 6,
+     "cacheReadCost": 0.25
+    }
    },
    {
     "id": "qwen-3.8-max",
@@ -9589,7 +10719,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 7,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 6,
+     "cacheReadCost": 0.25
+    }
    },
    {
     "id": "qwen-3.8-27b",
@@ -9605,7 +10747,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 70,
+     "pro": 80
+    },
+    "rates": {
+     "inputCost": 0.4,
+     "outputCost": 3,
+     "cacheReadCost": 0.04
+    }
    },
    {
     "id": "qwen-3.6-max",
@@ -9621,7 +10775,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1.3,
+     "outputCost": 7.8,
+     "cacheReadCost": 0.26
+    }
    },
    {
     "id": "qwen-3.6-plus",
@@ -9637,7 +10803,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 33,
+     "pro": 43
+    },
+    "rates": {
+     "inputCost": 0.5,
+     "outputCost": 3,
+     "cacheReadCost": 0.1
+    }
    },
    {
     "id": "qwen-3.7-max",
@@ -9653,7 +10831,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 33,
+     "pro": 43
+    },
+    "rates": {
+     "inputCost": 2.5,
+     "outputCost": 7.5,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "qwen-3.7-plus",
@@ -9669,7 +10859,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 33,
+     "pro": 43
+    },
+    "rates": {
+     "inputCost": 0.4,
+     "outputCost": 1.6,
+     "cacheReadCost": 0.08
+    }
    },
    {
     "id": "qwen-3.8-flash",
@@ -9685,7 +10887,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.16,
+     "outputCost": 0.47,
+     "cacheReadCost": 0.016
+    }
    },
    {
     "id": "qwen-3.7-flash",
@@ -9701,7 +10915,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Alibaba",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.03,
+     "outputCost": 0.13,
+     "cacheReadCost": 0.006
+    }
    },
    {
     "id": "longcat-2.0",
@@ -9717,7 +10943,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Meituan",
+    "allowanceByTier": {
+     "go": 10,
+     "goat": 50,
+     "pro": 60
+    },
+    "rates": {
+     "inputCost": 0.3,
+     "outputCost": 1.2,
+     "cacheReadCost": 0.006
+    }
    },
    {
     "id": "step-5-preview",
@@ -9733,7 +10971,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "StepFun",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1,
+     "outputCost": 2.7,
+     "cacheReadCost": 0.05
+    }
    },
    {
     "id": "step-3.7-flash",
@@ -9749,7 +10999,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "StepFun",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.2,
+     "outputCost": 1.15,
+     "cacheReadCost": 0.04
+    }
    },
    {
     "id": "step-3.5-flash",
@@ -9765,7 +11027,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "StepFun",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.09,
+     "outputCost": 0.3,
+     "cacheReadCost": 0.02
+    }
    },
    {
     "id": "mimo-v2.6-pro",
@@ -9781,7 +11055,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Xiaomi",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.435,
+     "outputCost": 0.87,
+     "cacheReadCost": 0.0036
+    }
    },
    {
     "id": "mimo-v2.6-pro-ultraspeed",
@@ -9795,7 +11081,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Xiaomi",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 10,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 4.35,
+     "outputCost": 8.7,
+     "cacheReadCost": 0.036
+    }
    },
    {
     "id": "mimo-v2.6-flash",
@@ -9811,7 +11109,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Xiaomi",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.14,
+     "outputCost": 0.28,
+     "cacheReadCost": 0.0028
+    }
    },
    {
     "id": "mimo-v2.5-pro",
@@ -9827,7 +11137,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Xiaomi",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.435,
+     "outputCost": 0.87,
+     "cacheReadCost": 0.0036
+    }
    },
    {
     "id": "mimo-v2.5",
@@ -9843,7 +11165,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Xiaomi",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 30,
+     "pro": 40
+    },
+    "rates": {
+     "inputCost": 0.14,
+     "outputCost": 0.28,
+     "cacheReadCost": 0.0028
+    }
    },
    {
     "id": "nemotron-3-ultra",
@@ -9859,7 +11193,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "NVIDIA",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.6,
+     "outputCost": 2.4,
+     "cacheReadCost": 0.12
+    }
    },
    {
     "id": "claude-fable-5-1",
@@ -9870,7 +11216,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 10,
+     "outputCost": 50,
+     "cacheReadCost": 0.25
+    }
    },
    {
     "id": "claude-fable-5",
@@ -9881,7 +11239,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 10,
+     "outputCost": 50,
+     "cacheReadCost": 1
+    }
    },
    {
     "id": "claude-opus-5-5",
@@ -9892,7 +11262,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 4,
+     "outputCost": 20,
+     "cacheReadCost": 0.2
+    }
    },
    {
     "id": "claude-opus-5",
@@ -9903,7 +11285,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 5,
+     "outputCost": 25,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "claude-opus-4-8",
@@ -9914,7 +11308,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 5,
+     "outputCost": 25,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "claude-opus-4-7",
@@ -9925,7 +11331,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 5,
+     "outputCost": 25,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "claude-opus-4-6",
@@ -9936,7 +11354,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 5,
+     "outputCost": 25,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "claude-sonnet-5-5",
@@ -9950,7 +11380,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 10,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 10,
+     "cacheReadCost": 0.2
+    }
    },
    {
     "id": "claude-sonnet-5",
@@ -9963,7 +11405,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 10,
+     "cacheReadCost": 0.2
+    }
    },
    {
     "id": "claude-sonnet-4-6",
@@ -9976,7 +11430,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 3,
+     "outputCost": 15,
+     "cacheReadCost": 0.3
+    }
    },
    {
     "id": "claude-haiku-4-5",
@@ -9989,7 +11455,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Anthropic",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 1,
+     "outputCost": 5,
+     "cacheReadCost": 0.1
+    }
    },
    {
     "id": "gpt-6-astra",
@@ -10000,7 +11478,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 10,
+     "outputCost": 50,
+     "cacheReadCost": 1
+    }
    },
    {
     "id": "gpt-6.1-sol",
@@ -10010,7 +11500,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 10,
+     "cacheReadCost": 0.1
+    }
    },
    {
     "id": "gpt-6-sol",
@@ -10023,7 +11525,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 10,
+     "cacheReadCost": 0.2
+    }
    },
    {
     "id": "gpt-6-luna",
@@ -10039,7 +11553,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.1,
+     "outputCost": 0.5,
+     "cacheReadCost": 0.01
+    }
    },
    {
     "id": "gpt-5.6-sol",
@@ -10053,7 +11579,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 70,
+     "pro": 80
+    },
+    "rates": {
+     "inputCost": 5,
+     "outputCost": 30,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "gpt-5.6-terra",
@@ -10066,7 +11604,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 12,
+     "cacheReadCost": 0.2
+    }
    },
    {
     "id": "gpt-5.6-luna",
@@ -10082,7 +11632,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.2,
+     "outputCost": 1.2,
+     "cacheReadCost": 0.02
+    }
    },
    {
     "id": "gpt-5.5",
@@ -10095,7 +11657,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 5,
+     "outputCost": 30,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "gpt-5.4",
@@ -10108,7 +11682,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 2.5,
+     "outputCost": 15,
+     "cacheReadCost": 0.25
+    }
    },
    {
     "id": "gpt-5.4-mini",
@@ -10121,7 +11707,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 0.75,
+     "outputCost": 4.5,
+     "cacheReadCost": 0.075
+    }
    },
    {
     "id": "gpt-5.3-codex",
@@ -10134,7 +11732,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "OpenAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 8,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "gemini-3.8-flash",
@@ -10148,7 +11758,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Google",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 40,
+     "pro": 50
+    },
+    "rates": {
+     "inputCost": 1.5,
+     "outputCost": 7.5,
+     "cacheReadCost": 0.15
+    }
    },
    {
     "id": "gemini-3.7-flash",
@@ -10162,7 +11784,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Google",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 40,
+     "pro": 50
+    },
+    "rates": {
+     "inputCost": 1.5,
+     "outputCost": 7.5,
+     "cacheReadCost": 0.15
+    }
    },
    {
     "id": "gemini-3.6-flash",
@@ -10175,7 +11809,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Google",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 1.5,
+     "outputCost": 7.5,
+     "cacheReadCost": 0.15
+    }
    },
    {
     "id": "gemini-3.5-flash",
@@ -10188,7 +11834,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Google",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 1.5,
+     "outputCost": 9,
+     "cacheReadCost": 0.15
+    }
    },
    {
     "id": "gemini-3.5-flash-lite",
@@ -10201,7 +11859,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Google",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 0.3,
+     "outputCost": 2.5,
+     "cacheReadCost": 0.03
+    }
    },
    {
     "id": "gemini-3.1-flash-lite",
@@ -10214,7 +11884,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Google",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 0.25,
+     "outputCost": 1.5,
+     "cacheReadCost": 0.03
+    }
    },
    {
     "id": "fugu-ultra",
@@ -10225,7 +11907,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Sakana",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 5,
+     "outputCost": 30,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "muse-spark-1.3",
@@ -10239,7 +11933,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Meta",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1.25,
+     "outputCost": 4.25,
+     "cacheReadCost": 0.15
+    }
    },
    {
     "id": "muse-spark-1.3-contributor",
@@ -10255,7 +11961,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Meta",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.1,
+     "outputCost": 0.2,
+     "cacheReadCost": 0.002
+    }
    },
    {
     "id": "muse-spark-1.2",
@@ -10269,7 +11987,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Meta",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1.25,
+     "outputCost": 4.25,
+     "cacheReadCost": 0.15
+    }
    },
    {
     "id": "muse-spark-1.2-contributor",
@@ -10285,7 +12015,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Meta",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.1,
+     "outputCost": 0.2,
+     "cacheReadCost": 0.002
+    }
    },
    {
     "id": "muse-spark-1.1",
@@ -10298,7 +12040,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Meta",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 20
+    },
+    "rates": {
+     "inputCost": 1.25,
+     "outputCost": 4.25,
+     "cacheReadCost": 0.15
+    }
    },
    {
     "id": "grok-4.7",
@@ -10312,7 +12066,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "xAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 6,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "grok-4.6",
@@ -10326,7 +12092,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "xAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 6,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "grok-4.5",
@@ -10342,7 +12120,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "xAI",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 2,
+     "outputCost": 6,
+     "cacheReadCost": 0.5
+    }
    },
    {
     "id": "inkling",
@@ -10358,7 +12148,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Thinking Machines",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 1,
+     "outputCost": 4.05,
+     "cacheReadCost": 0.17
+    }
    },
    {
     "id": "inkling-small",
@@ -10374,7 +12176,19 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": false,
+    "provider": "Thinking Machines",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.5,
+     "outputCost": 1.2,
+     "cacheReadCost": 0.1
+    }
    },
    {
     "id": "typesafe/jev",
@@ -10388,16 +12202,29 @@
      "individual-max",
      "individual-ultra",
      "teams-pro"
-    ]
+    ],
+    "free": true,
+    "provider": "TypeSafe",
+    "allowanceByTier": {
+     "go": 6,
+     "goat": 20,
+     "pro": 30
+    },
+    "rates": {
+     "inputCost": 0.042,
+     "outputCost": 0,
+     "cacheReadCost": 0
+    }
    },
    {
     "id": "claude-sonnet-4-5",
     "name": "Claude Sonnet 4.5",
     "deprecated": true,
-    "availableIn": []
+    "availableIn": [],
+    "free": false
    }
   ],
-  "fetchedAt": "2026-10-01T18:51:09.648Z"
+  "fetchedAt": "2026-10-01T19:22:21.647Z"
  },
  "planLevel": {
   "rows": [
@@ -10456,7 +12283,7 @@
     "usageText": "Custom"
    }
   ],
-  "fetchedAt": "2026-10-01T18:51:09.648Z",
+  "fetchedAt": "2026-10-01T19:22:21.647Z",
   "sourceUrl": "https://commandcode.ai/docs/resources/pricing-limits"
  },
  "validators": {},

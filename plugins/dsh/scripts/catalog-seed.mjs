@@ -42,8 +42,14 @@ const seedFile = catalogSeedPath();
 /** 有官方专页的档位（ultra 按 Max 推断，也进 seed，让 Ultra 用户离线也有数）。 */
 const PLANS_WITH_DOCS = Object.keys(PLAN_DOC_URLS).filter((planId) => PLAN_DOC_URLS[planId] !== undefined);
 
-/** seed 体积上限：超过说明有人把上游正文也塞进来了。 */
-const MAX_SEED_BYTES = 256 * 1024;
+/**
+ * seed 体积上限：超过说明有人把上游正文也塞进来了。
+ *
+ * 现为 384 KB：加入「按官方 provider 默认形状推算」与「免费」两类模型后，每个模型
+ * 要带上复算所需的 budgetUsd / rates / shape，体积从 241 KB 涨到约 280 KB。
+ * 这份文件只装解析结果，不装页面正文。
+ */
+const MAX_SEED_BYTES = 384 * 1024;
 
 const argv = process.argv.slice(2);
 const has = (flag) => argv.includes(flag);

@@ -216,8 +216,54 @@ console.log('paths and constants')
     assert.equal(catalog.CATALOG_TTL_ENV_NAME, 'COMMANDCODE_CATALOG_TTL_MS')
     assert.equal(catalog.CATALOG_KIND, 'commandcode-catalog')
     assert.equal(catalog.CATALOG_VERSION, 1)
-    assert.equal(catalog.CATALOG_SCHEMA, 1)
+    // v2 added the pricing-calculator fallback, the Free state and per-planId Go
+    // window fractions; a bump is what forces old caches to be recomputed.
+    assert.equal(catalog.CATALOG_SCHEMA, 2)
     assert.deepEqual(catalog.CATALOG_REQUEST_HEADERS, { RSC: '1' })
+  })
+  check('Go window fractions come from the plan id, never from the shared calculator tier', () => {
+    // The vendor's short tier `go` covers two generations with different windows
+    // ($2/$5 → 0.2/0.5 and $3/$6 → 0.3/0.6). Indexing the fractions by tier instead
+    // of by planId would hand a new-Go user windows 50% too generous — and the panel
+    // would look perfectly plausible while saying it.
+    const go = catalog.parsePlanCatalog('individual-go', goatFixture, { now: NOW })
+    const goV1 = catalog.parsePlanCatalog('individual-go-v1', goatFixture, { now: NOW })
+    assert.deepEqual(go.entry.fractions, { fiveHourFraction: 0.2, weeklyFraction: 0.5 })
+    assert.deepEqual(goV1.entry.fractions, { fiveHourFraction: 0.3, weeklyFraction: 0.6 })
+    assert.equal(catalog.PLAN_CALCULATOR_TIERS['individual-go'], 'go')
+    assert.equal(catalog.PLAN_CALCULATOR_TIERS['individual-go-v1'], 'go')
+    // 0.3 / 0.2 is 1.4999999999999998 in IEEE754; compare with a tolerance.
+    assert.ok(Math.abs(goV1.entry.fractions.fiveHourFraction / go.entry.fractions.fiveHourFraction - 1.5) < 1e-9)
+  })
+  check('the pricing-calculator fallback stops at go/goat/pro, where the vendor publishes allowances', () => {
+    for (const planId of ['individual-max', 'individual-ultra', 'individual-provider', 'teams-pro']) {
+      assert.equal(catalog.PLAN_CALCULATOR_TIERS[planId], undefined, `${planId} must not be derivable from the calculator`)
+    }
+    for (const planId of ['individual-go', 'individual-go-v1', 'individual-goat', 'individual-pro', 'individual-pro-v1']) {
+      assert.equal(typeof catalog.PLAN_CALCULATOR_TIERS[planId], 'string')
+    }
+  })
+  check('a model is available when its availability says so, not when a plan name does', () => {
+    // `minPlanName` in the vendor's payload is "cheapest plan that includes this model",
+    // and Go's count happens to equal the individual-go availability count — close
+    // enough that reaching for it instead of `availability[planId]` looks harmless.
+    const pricingText = [
+      `2f:["$","$L4f",null,{"rows":${JSON.stringify([
+        { id: 'only-on-go', name: 'Only On Go', minPlanName: 'Go', availability: { 'individual-go': true } },
+      ])}}]`,
+      `2a:["$","$L4e",null,{"models":${JSON.stringify([
+        { id: 'only-on-go', name: 'Only On Go', provider: 'DeepSeek', inputCost: 0.1, outputCost: 0.2, cacheReadCost: 0.01, planAllowanceUsd: { go: 10, goat: 70, pro: 80 } },
+      ])}}]`,
+    ].join('\n')
+    const availability = catalog.parsePricingCatalog(pricingText).models
+    assert.deepEqual(availability[0].availableIn, ['individual-go'])
+    // Available and derivable on Go…
+    const onGo = catalog.parsePlanCatalog('individual-go', goatFixture, { now: NOW, availability }).entry
+    const derived = onGo.models.find((model) => model.key === 'only-on-go')
+    assert.equal(derived.source, 'derived')
+    // …and simply absent on Max, which the calculator cannot price either.
+    const onMax = catalog.parsePlanCatalog('individual-max', goatFixture, { now: NOW, availability }).entry
+    assert.equal(onMax.models.find((model) => model.key === 'only-on-go'), undefined)
   })
   check('only the four published plan pages are mapped; the rest stay undefined', () => {
     assert.equal(catalog.PRICING_DOC_URL, 'https://commandcode.ai/docs/resources/pricing-limits')
@@ -419,7 +465,7 @@ console.log('the real pricing/limits page')
     assert.equal(withAvailability.availableModels, 56)
     // Models the official table skipped are listed with no numbers -- never with a 0.
     const extras = withAvailability.models.filter((model) => model.source === 'availability-only')
-    assert.deepEqual(extras.map((model) => model.name), ['GLM-5.1', 'Kimi K2.6', 'Ling 3.0 Flash Sante', 'Space Bunny Alpha', 'Tencent Hy4 Preview'])
+    assert.deepEqual(extras.map((model) => model.name), ['GLM-5.1', 'Kimi K2.6', 'Tencent Hy4 Preview'])
     for (const model of extras) {
       assert.equal(model.monthly, undefined)
       assert.equal(model.fiveHour, undefined)
@@ -427,6 +473,46 @@ console.log('the real pricing/limits page')
       assert.equal(model.free, false)
       assert.equal(typeof model.modelId, 'string')
     }
+    // A model the vendor gives away is not "unpriced": it is Free, and it says so.
+    const free = withAvailability.models.filter((model) => model.source === 'free')
+    assert.deepEqual(free.map((model) => model.name), ['Ling 3.0 Flash Sante', 'Space Bunny Alpha'])
+    for (const model of free) {
+      assert.equal(model.free, true)
+      assert.equal(model.monthly, undefined, 'Free must not be encoded as a number')
+      assert.equal(typeof model.modelId, 'string')
+    }
+  })
+  check('a model the plan page skipped is priced from the pricing calculator, by provider shape', () => {
+    // The plan page enumerates 51 models; the pricing page's calculator carries the rest.
+    // The vendor derives a missing request shape from the provider — MiniMax bills 125
+    // output tokens, an unmapped provider falls back to 200 — and that difference is
+    // what makes this check discriminating: both models share one $70 allowance and one
+    // set of rates, so only a real provider lookup can produce two different counts.
+    const rates = { inputCost: 0.3, outputCost: 1.2, cacheReadCost: 0.03 }
+    const planAllowanceUsd = { go: 10, goat: 70, pro: 80 }
+    const pricingText = [
+      `2f:["$","$L4f",null,{"rows":${JSON.stringify([
+        { id: 'MiniMaxAI/MiniMax-M2.5', name: 'MiniMax M2.5', availability: { 'individual-goat': true } },
+        { id: 'unknown/x', name: 'Unknown X', availability: { 'individual-goat': true } },
+      ])}}]`,
+      `2a:["$","$L4e",null,{"models":${JSON.stringify([
+        { id: 'minimax-m2-5', name: 'MiniMax M2.5', provider: 'MiniMax', ...rates, planAllowanceUsd },
+        { id: 'x', name: 'Unknown X', provider: 'Unmapped', ...rates, planAllowanceUsd },
+      ])}}]`,
+    ].join('\n')
+    const availability = catalog.parsePricingCatalog(pricingText).models
+    const entry = catalog.parsePlanCatalog('individual-goat', goatFixture, { now: NOW, availability }).entry
+    const derived = entry.models.filter((model) => model.source === 'derived')
+    assert.deepEqual(derived.map((model) => model.name), ['MiniMax M2.5', 'Unknown X'])
+    const [minimax, unknown] = derived
+    assert.equal(minimax.shape.outputTokens, 125)
+    assert.equal(unknown.shape.outputTokens, 200)
+    assert.equal(minimax.shapeSource, 'derived-from-provider')
+    assert.equal(catalog.formatCount(minimax.monthly), '37,000')
+    assert.equal(catalog.formatCount(unknown.monthly), '35,400')
+    // Derived figures are recomputable too: the inputs are stored with them.
+    assert.equal(catalog.computeAllowance(minimax, entry.fractions, NOW).monthly, minimax.monthly)
+    assert.equal(entry.availableModels, 53)
   })
   check('parsePlanCatalog carries the plan identity and the window basis', () => {
     const entry = catalog.parsePlanCatalog('individual-goat', goatFixture, { now: NOW }).entry
@@ -888,7 +974,7 @@ const viewFile = tmpFile('view.json')
     assert.equal(result.docUrl, GOAT_URL)
     assert.deepEqual(result.windows, { fiveHourFraction: 0.2, weeklyFraction: 0.5 })
     assert.equal(result.basis.inputTokens, 800)
-    assert.deepEqual(result.coverage, { published: 51, available: 56 })
+    assert.deepEqual(result.coverage, { published: 51, derived: 0, available: 56 })
     assert.equal(result.models.length, 56)
   })
   check('your configured models come first, then the priced ones, then the rest by name', () => {
@@ -907,16 +993,21 @@ const viewFile = tmpFile('view.json')
     }
   })
   check('a model the docs never priced shows no numbers, not zero', () => {
-    const extras = view().models.filter((model) => !model.estimated)
-    assert.equal(extras.length, 5)
-    for (const model of extras) {
+    const unestimated = view().models.filter((model) => !model.estimated)
+    assert.equal(unestimated.length, 5)
+    const priced = unestimated.filter((model) => model.free !== true)
+    for (const model of priced) {
       assert.equal(model.monthly, undefined, `${model.name} invented a monthly count`)
       assert.equal(model.fiveHour, undefined)
       assert.equal(model.week, undefined)
       assert.equal(model.free, false)
       assert.equal(catalog.formatCount(model.monthly), '—')
     }
-    assert.deepEqual(view().models.filter((model) => !model.estimated).map((model) => model.name), ['Kimi K2.6', 'GLM-5.1', 'Ling 3.0 Flash Sante', 'Space Bunny Alpha', 'Tencent Hy4 Preview'])
+    // Kimi K2.6 leads because it is one of the configured models; then the rest by name.
+    assert.deepEqual(priced.map((model) => model.name), ['Kimi K2.6', 'GLM-5.1', 'Tencent Hy4 Preview'])
+    // The other two are free, and Free is not the same statement as "no figure".
+    const free = unestimated.filter((model) => model.free === true)
+    assert.deepEqual(free.map((model) => model.name), ['Ling 3.0 Flash Sante', 'Space Bunny Alpha'])
   })
   check('a configured model is matched through normalizeModelKey, whatever spelling the config uses', () => {
     const result = catalog.catalogView({ catalog: syncedCatalog, bundled: false, planId: 'individual-goat', configuredModels: ['DeepSeek V4.1 Flash', 'Kimi K2.6 (latest)'], now: NOW + HOUR })
@@ -962,7 +1053,7 @@ const viewFile = tmpFile('view.json')
   check('a plan the catalog does not carry yields an empty list and a named warning', () => {
     const result = view({ planId: 'teams-pro' })
     assert.deepEqual(result.models, [])
-    assert.deepEqual(result.coverage, { published: 0, available: 0 })
+    assert.deepEqual(result.coverage, { published: 0, derived: 0, available: 0 })
     assert.equal(result.planName, undefined)
     assert.equal(result.docUrl, null)
     assert.ok(result.warnings.includes('catalog-plan-not-listed:teams-pro'))

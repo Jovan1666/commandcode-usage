@@ -4,7 +4,7 @@
 
 > **本插件住在 [commandcode-usage](https://github.com/Jovan1666/commandcode-usage) 这个 monorepo 里**
 > （`plugins/dsh`）。和那里另外六个适配器不同，它保留了自己那套数据层（`quota.mjs`），
-> 没有改用共享的 `core/cc-usage.mjs`——它的 host/client 两半和 240 项离线校验都是按那套契约写的。
+> 没有改用共享的 `core/cc-usage.mjs`——它的 host/client 两半和 244 项离线校验都是按那套契约写的。
 > 除此之外没有任何变化。
 
 
@@ -127,7 +127,7 @@ New-Item -ItemType Junction -Path "$dsh\profiles\web\node_modules\dsh-commandcod
 
 ## 每个模型能调多少次（设置面板）
 
-卡片回答的是「我现在用得多深」；**设置 → Command Code quota** 回答的是另一个问题：「如果我只用这一个模型，这个套餐大概够我调多少次」。
+卡片回答的是「我现在用得多深」；**设置 → 调用次数** 回答的是另一个问题：「如果我只用这一个模型，这个套餐大概够我调多少次」。
 
 表里列出这个套餐能调用的每个模型，给出 5 小时 / 每周 / 每月的次数，**你自己在 DSH 里配置的模型排在最前**。表格上方是套餐级概览（`GOAT · $70 · ~75K requests`）—— 那是另一套口径算出来的另一个数，界面上分开标注，永远不会被当成同一个数字读。
 
@@ -135,7 +135,9 @@ New-Item -ItemType Junction -Path "$dsh\profiles\web\node_modules\dsh-commandcod
 
 **只在必要时才去问。** 官方文档页忽略条件请求（服务器给了 ETag，收到 `If-None-Match` 仍回 `200`，压根没有 304 分支），所以插件自己做这件事：先发一个 `HEAD` 取该页 ETag（**0 字节**），只有真的变了才下载正文（约 200 KB，压缩后约 37 KB）。核对时机是「你打开这个设置栏目、且本地副本已超过一天」，或者你点**检查更新**；侧边栏卡片永远不会触发核对。插件里随包带了一份基线，所以第一次使用、或者机器离线时，表格照样有数字，并标注「内置基线，尚未同步」。
 
-官方没说的地方一个都不猜：页面没列出的模型显示 `—` 而不是 `0`；官方没有专页的档位如实说明，不去借别的档位数字（Ultra 按 Max 展示并标注是推断）；核对失败时保留上次的数字并标出它的年龄。
+套餐页没给数字的模型，由定价页自己的计算器补上：同一份额度、同一套单价，请求形状也按站点自己的做法从 provider 推导（这些行标注「推算」）。官方免费送的模型显示 `Free`。
+
+官方没说的地方一个都不猜：两页都没定价的模型显示 `—` 而不是 `0`；官方没有专页的档位如实说明，不去借别的档位数字（Ultra 按 Max 展示并标注是推断）；核对失败时保留上次的数字并标出它的年龄。
 
 ## `/quota` 命令
 
@@ -306,14 +308,14 @@ key: $DSH_HOME/.credentials.yaml → refs.COMMAND_CODE_GOAT_API_KEY
 # 1. React 只有组件测试和预览页需要
 mkdir .devdeps && cd .devdeps && npm init -y && npm install react@18 react-dom@18 && cd ..
 
-# 2. 一次跑完全部 —— 240 项，一个结论，不碰网络也不读真实凭据
+# 2. 一次跑完全部 —— 244 项，一个结论，不碰网络也不读真实凭据
 node scripts/verify.mjs           # 加 --live 会额外打真实账号
 node scripts/verify.mjs --quiet   # 每个套件只打一行汇总
 ```
 
 ```text
 ok    quota   (discovery contract)            27 checks
-ok    catalog (docs catalog, change detection) 82 checks
+ok    catalog (docs catalog, change detection) 86 checks
 ok    host    (route, cache, concurrency)     30 checks
 ok    client  (rendering, boundaries)         59 checks
 ok    dynamic (drift, resets, bad payloads)   39 checks

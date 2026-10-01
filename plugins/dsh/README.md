@@ -4,7 +4,7 @@
 
 > **This plugin lives in the [commandcode-usage](https://github.com/Jovan1666/commandcode-usage) monorepo**
 > (`plugins/dsh`). Unlike the other six adapters there, it keeps its own data layer
-> (`quota.mjs`) rather than sharing `core/cc-usage.mjs` — its host/client halves and 240
+> (`quota.mjs`) rather than sharing `core/cc-usage.mjs` — its host/client halves and 244
 > offline checks are built against that contract. Everything else about it is unchanged.
 
 
@@ -54,7 +54,7 @@ dsh --version          # 需要 0.1.5-rc.1 或更高
 npm i -g @deepseek-ai/dsh@latest
 ```
 
-注意：插件的 240 项离线校验**跑得过**也不需要这个版本——那些校验不启动 dsh。
+注意：插件的 244 项离线校验**跑得过**也不需要这个版本——那些校验不启动 dsh。
 所以"校验全绿"不代表装上去能用。
 
 ## Install
@@ -146,7 +146,7 @@ The sidebar is about 200 px of content width, and a laptop screen makes small ty
 
 ## Per-model allowances, in Settings
 
-The card answers *how deep am I*. **Settings → Command Code quota** answers the other question: *what would this plan give me if I only ever called this model?*
+The card answers *how deep am I*. **Settings → Call counts** answers the other question: *what would this plan give me if I only ever called this model?*
 
 Every model the plan can call, with requests per 5 hours, per week and per month — the models you configured in DSH first. Above the table sits the plan-level headline (`GOAT · $70 · ~75K requests`): a different figure on a different basis, labelled so the two are never read as one number.
 
@@ -154,7 +154,9 @@ The figures are the vendor's, not ours. Each plan page publishes a per-model mon
 
 **It asks only when it has to.** The docs pages ignore conditional requests (the server hands out an ETag and then answers `200` to `If-None-Match` — there is no 304 branch to lean on), so the plugin does the check itself: `HEAD` for the page's ETag, 0 bytes, and only a real change downloads a body (about 200 KB, ~37 KB compressed). A check runs when you open the section and the local copy is over a day old, or when you press **Check for updates**; the sidebar card never triggers one. A baseline ships inside the plugin, so a first run — or a machine with no network — still shows figures, labelled *baseline, not synced yet*.
 
-Nothing is guessed where the vendor is silent. A model the page does not enumerate reads `—`, never `0`; a plan with no per-model page of its own says so instead of borrowing another tier's numbers (Ultra is shown from Max's table and labelled an inference); a failed check keeps the previous figures and prints how old they are.
+Where the plan page lists no figure at all, the pricing page's own calculator fills it in: same allowance, same rates, and a request shape derived from the provider exactly the way the site derives it (those rows are tagged *derived*). A model the vendor gives away reads `Free`.
+
+Nothing is guessed where the vendor is silent. A model neither page prices reads `—`, never `0`; a plan with no per-model page of its own says so instead of borrowing another tier's numbers (Ultra is shown from Max's table and labelled an inference); a failed check keeps the previous figures and prints how old they are.
 
 ## The `/quota` command
 
@@ -325,14 +327,14 @@ The CLI's human-readable output is Chinese; `--json` is language-neutral and is 
 # 1. React is needed only by the component test and the preview page
 mkdir .devdeps && cd .devdeps && npm init -y && npm install react@18 react-dom@18 && cd ..
 
-# 2. Everything at once — 240 checks, one verdict, no network, no real credentials
+# 2. Everything at once — 244 checks, one verdict, no network, no real credentials
 node scripts/verify.mjs           # add --live to also hit a real account
 node scripts/verify.mjs --quiet   # one summary line per suite
 ```
 
 ```text
 ok    quota   (discovery contract)            27 checks
-ok    catalog (docs catalog, change detection) 82 checks
+ok    catalog (docs catalog, change detection) 86 checks
 ok    host    (route, cache, concurrency)     30 checks
 ok    client  (rendering, boundaries)         59 checks
 ok    dynamic (drift, resets, bad payloads)   39 checks
