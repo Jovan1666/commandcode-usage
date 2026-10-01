@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- **The plan's per-model allowances now live in Settings, not in a browser tab.** “What would this plan give me
+  if I only ever called this model?” is answered by a new section in the host's settings dialog: every model the
+  plan can call, with requests per 5 hours / week / month, the models the user configured first, and the
+  plan-level headline kept visibly separate from the per-model figures. The numbers are the vendor's own:
+  the docs pages publish a per-model monthly budget, per-token rates and the request shape, then compute the
+  counts client-side; `catalog.mjs` reproduces that arithmetic and rounds like the site, and the `catalog`
+  suite pins 244 rows across four plans against the numbers the vendor's pages render.
+
+- **The catalog checks for updates without downloading anything when nothing changed.** The docs pages ignore
+  conditional requests (`If-None-Match` against an ETag the server just issued still answers `200`), so the
+  sync sends `HEAD` for the page's ETag — 0 bytes — and only fetches a body when the ETag moved. One check per
+  day at most, only when the settings section is opened, plus a manual button; a baseline ships in the package
+  so a first run or an offline host still has figures, marked as unsynced.
+
 - **A slow Command Code made three of the four readings vanish, and the monthly row with them.** The data
   layer gave every endpoint 15 s. On 2026-09-30 the vendor's own `server-timing` header self-reported
   `total;dur=14018.0` for `/alpha/usage/summary` (against `dur=43.0` for `/alpha/billing/credits`), so three
